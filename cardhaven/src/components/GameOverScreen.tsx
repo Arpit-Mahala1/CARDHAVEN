@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { GameState, LeaderboardEntry } from '../types';
 import { useLeaderboard } from '../hooks/useLeaderboard';
-import { User } from 'firebase/auth';
+// import { User } from 'firebase/auth';
 
 interface GameOverScreenProps {
   gameState: GameState;
-  user: User | null;
+  user: any; // User type replaced with any
   onMainMenu: () => void;
 }
 

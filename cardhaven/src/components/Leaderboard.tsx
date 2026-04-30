@@ -2,7 +2,7 @@ import React from 'react';
 import { useLeaderboard } from '../hooks/useLeaderboard';
 
 export default function Leaderboard() {
-  const { entries, loading, error } = useLeaderboard(100);
+  const { entries, loading } = useLeaderboard();
 
   if (loading) {
     return (
@@ -12,14 +12,7 @@ export default function Leaderboard() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="text-center p-8 glass-panel border-danger text-danger">
-        <p>Failed to load the Hall of Legends.</p>
-        <p className="text-sm mt-2 opacity-80">{error}</p>
-      </div>
-    );
-  }
+
 
   return (
     <div className="w-full max-w-5xl mx-auto animate-fade-in">

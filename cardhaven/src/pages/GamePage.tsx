@@ -3,11 +3,11 @@ import { GameState } from '../types';
 import BattleScreen from '../components/BattleScreen';
 import RewardScreen from '../components/RewardScreen';
 import GameOverScreen from '../components/GameOverScreen';
-import { User } from 'firebase/auth';
+// import { User } from 'firebase/auth';
 
 interface GamePageProps {
   gameState: GameState;
-  user: User | null;
+  user: any; // User type replaced with any
   onPlayCard: (index: number, x?: number, y?: number) => boolean;
   onEndTurn: () => void;
   onPickRewardCard: (card: any) => void;

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { User } from 'firebase/auth';
 
 interface MainMenuProps {
-  user: User | null;
+  user: any;
   onStartGame: (characterClass: 'warrior' | 'mage' | 'rogue') => void;
   onLeaderboard: () => void;
   onLoginClick?: () => void;
