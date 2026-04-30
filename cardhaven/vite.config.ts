@@ -1,3 +1,4 @@
+// Automatic deployment enabled via GitHub Actions
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
