@@ -1,0 +1,61 @@
+{
+  "enemies": [
+    {
+      "id": "goblin",
+      "name": "Goblin Scout",
+      "baseHealth": 14,
+      "actions": [
+        { "id": "slash", "name": "Slash", "damage": 4 },
+        { "id": "rest", "name": "Rest", "block": 3 },
+        { "id": "slash", "name": "Slash", "damage": 4 }
+      ],
+      "scalingFactor": 1.0
+    },
+    {
+      "id": "skeleton",
+      "name": "Skeleton",
+      "baseHealth": 18,
+      "actions": [
+        { "id": "bone_attack", "name": "Bone Strike", "damage": 6 },
+        { "id": "bone_attack", "name": "Bone Strike", "damage": 6 },
+        { "id": "rattle", "name": "Rattle", "statusEffects": [{ "type": "weak", "stacks": 1 }] }
+      ],
+      "scalingFactor": 1.0
+    },
+    {
+      "id": "witch",
+      "name": "Swamp Witch",
+      "baseHealth": 15,
+      "actions": [
+        { "id": "curse", "name": "Curse", "statusEffects": [{ "type": "poison", "stacks": 3 }] },
+        { "id": "spell", "name": "Hex Bolt", "damage": 7 },
+        { "id": "hex", "name": "Hex", "statusEffects": [{ "type": "vulnerable", "stacks": 2 }] }
+      ],
+      "scalingFactor": 1.1
+    },
+    {
+      "id": "knight",
+      "name": "Dark Knight",
+      "baseHealth": 28,
+      "actions": [
+        { "id": "heavy_blow", "name": "Heavy Blow", "damage": 8 },
+        { "id": "shield_up", "name": "Shield Up", "block": 10 },
+        { "id": "heavy_blow", "name": "Heavy Blow", "damage": 8 },
+        { "id": "intimidate", "name": "Intimidate", "statusEffects": [{ "type": "weak", "stacks": 2 }] }
+      ],
+      "scalingFactor": 1.15
+    },
+    {
+      "id": "demon",
+      "name": "Infernal Demon",
+      "baseHealth": 38,
+      "actions": [
+        { "id": "infernal_strike", "name": "Infernal Strike", "damage": 12 },
+        { "id": "curse_all", "name": "Curse All", "statusEffects": [{ "type": "vulnerable", "stacks": 2 }] },
+        { "id": "infernal_strike", "name": "Infernal Strike", "damage": 12 },
+        { "id": "hellfire", "name": "Hellfire", "damage": 8, "statusEffects": [{ "type": "poison", "stacks": 2 }] }
+      ],
+      "scalingFactor": 1.2
+    }
+  ]
+}

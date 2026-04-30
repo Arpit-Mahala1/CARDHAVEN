@@ -1,0 +1,63 @@
+{
+  "relics": [
+    {
+      "id": "energy_ring",
+      "name": "Energy Ring",
+      "description": "Start each turn with 1 extra energy.",
+      "rarity": "common",
+      "passive": true
+    },
+    {
+      "id": "molten_egg",
+      "name": "Molten Egg",
+      "description": "Attacks deal 1 additional damage.",
+      "rarity": "common",
+      "passive": true
+    },
+    {
+      "id": "acorn",
+      "name": "Acorn",
+      "description": "Gain 10 max health.",
+      "rarity": "common",
+      "passive": true
+    },
+    {
+      "id": "potion_bottle",
+      "name": "Potion Bottle",
+      "description": "Heal 10 health at the start of combat.",
+      "rarity": "common",
+      "passive": true,
+      "activationCondition": "start_of_combat"
+    },
+    {
+      "id": "ancient_tome",
+      "name": "Ancient Tome",
+      "description": "Draw cards cost 1 less energy.",
+      "rarity": "uncommon",
+      "passive": true
+    },
+    {
+      "id": "sword_of_strength",
+      "name": "Sword of Strength",
+      "description": "Attacks deal 2 additional damage.",
+      "rarity": "uncommon",
+      "passive": true
+    },
+    {
+      "id": "mirrored_shield",
+      "name": "Mirrored Shield",
+      "description": "When you block 20+ in a turn, deal 10 damage to all enemies.",
+      "rarity": "uncommon",
+      "passive": true,
+      "activationCondition": "high_block"
+    },
+    {
+      "id": "philosophers_stone",
+      "name": "Philosopher's Stone",
+      "description": "Start each turn with 1 Strength.",
+      "rarity": "rare",
+      "passive": true,
+      "activationCondition": "start_of_turn"
+    }
+  ]
+}

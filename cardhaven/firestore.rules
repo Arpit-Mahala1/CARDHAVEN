@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public read for leaderboard, allow create from anyone (simplified for MVP), 
+    // real app would require auth
+    match /leaderboard/{document=**} {
+      allow read;
+      allow write;
+    }
+  }
+}
