@@ -9,7 +9,11 @@ import './styles/globals.css';
 
 function App() {
   const { user, loading: authLoading, loginAnonymously, logout } = useAuth();
-  const { gameState, startNewRun, playCard, endTurn, pickRewardCard, skipReward } = useGameState();
+  const { 
+    gameState, startNewRun, playCard, endTurn, 
+    pickRewardCard, skipReward, 
+    buyCard, buyRelic, removeCard, leaveShop 
+  } = useGameState();
   const [screen, setScreen] = useState<Screen>('menu');
 
   if (authLoading) {
@@ -49,6 +53,10 @@ function App() {
           onEndTurn={endTurn}
           onPickRewardCard={pickRewardCard}
           onSkipReward={skipReward}
+          onBuyCard={buyCard}
+          onBuyRelic={buyRelic}
+          onRemoveCard={removeCard}
+          onLeaveShop={leaveShop}
           onMainMenu={() => setScreen('menu')}
         />
       )}

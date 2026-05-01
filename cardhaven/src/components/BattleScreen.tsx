@@ -120,6 +120,14 @@ export default function BattleScreen({
               <span className="font-mono font-bold text-accent-blue text-lg">{gameState.block}</span>
             </div>
 
+            {/* Shards */}
+            <div className="flex justify-between items-center bg-gold bg-opacity-10 p-2 rounded border border-gold border-opacity-30">
+              <span className="font-mono text-text-secondary flex items-center gap-2">
+                💎 Shards
+              </span>
+              <span className="font-mono font-bold text-gold text-lg">{gameState.shards}</span>
+            </div>
+
             {/* Energy */}
             <div className="flex flex-col gap-2 pt-4 border-t border-white border-opacity-10">
               <div className="flex justify-between items-end text-sm">

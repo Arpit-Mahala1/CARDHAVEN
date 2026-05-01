@@ -1,6 +1,20 @@
 {
   "enemies": [
     {
+      "id": "skeleton_weaver",
+      "name": "Skeleton Weaver",
+      "baseHealth": 15,
+      "movementPattern": "weaver",
+      "scalingFactor": 1.15,
+      "actions": [
+        {
+          "id": "weaver_strike",
+          "name": "Quick Strike",
+          "damage": 5
+        }
+      ]
+    },
+    {
       "id": "goblin",
       "name": "Goblin Scout",
       "baseHealth": 14,

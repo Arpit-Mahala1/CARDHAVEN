@@ -31,6 +31,7 @@ export function useGameState() {
       energy: GAME_CONSTANTS.STARTING_ENERGY,
       maxEnergy: GAME_CONSTANTS.STARTING_ENERGY,
       floor: 1,
+      shards: GAME_CONSTANTS.STARTING_SHARDS,
       statusEffects: [],
       relics: [],
       enemies: generateEnemyEncounter(1),
@@ -101,6 +102,35 @@ export function useGameState() {
     setGameState(engine.getState());
   }, []);
 
+  const buyCard = useCallback((index: number, cost: number) => {
+    const engine = engineRef.current;
+    if (engine && engine.buyCard(index, cost)) {
+      setGameState(engine.getState());
+    }
+  }, []);
+
+  const buyRelic = useCallback((index: number, cost: number) => {
+    const engine = engineRef.current;
+    if (engine && engine.buyRelic(index, cost)) {
+      setGameState(engine.getState());
+    }
+  }, []);
+
+  const removeCard = useCallback((index: number, cost: number) => {
+    const engine = engineRef.current;
+    if (engine && engine.removeCardFromDeck(index, cost)) {
+      setGameState(engine.getState());
+    }
+  }, []);
+
+  const leaveShop = useCallback(() => {
+    const engine = engineRef.current;
+    if (engine) {
+      engine.leaveShop();
+      setGameState(engine.getState());
+    }
+  }, []);
+
   return {
     gameState,
     startNewRun,
@@ -108,6 +138,10 @@ export function useGameState() {
     endTurn,
     pickRewardCard,
     skipReward,
+    buyCard,
+    buyRelic,
+    removeCard,
+    leaveShop,
   };
 }
 

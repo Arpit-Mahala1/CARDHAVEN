@@ -1,6 +1,45 @@
 {
   "cards": [
     {
+      "id": "force_wave",
+      "name": "Force Wave",
+      "description": "Deal 6 damage and push target back 1 row.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {
+        "damage": 6,
+        "knockback": 1
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "fireball",
+      "name": "Fireball",
+      "description": "Deal 10 damage in a 2x2 area.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 10,
+        "area": "2x2"
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "holy_cross",
+      "name": "Holy Cross",
+      "description": "Deal 8 damage in a cross shape.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 8,
+        "area": "cross"
+      },
+      "targetType": "cell"
+    },
+    {
       "id": "strike",
       "name": "Strike",
       "description": "Deal 6 damage.",

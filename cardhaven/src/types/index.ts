@@ -21,6 +21,8 @@ export interface CardEffect {
   statusEffects?: StatusEffectApplication[];
   applyToSelf?: boolean;
   hits?: number;
+  knockback?: number;
+  area?: '2x2' | 'cross' | 'row' | 'column';
 }
 
 export interface StatusEffectApplication {
@@ -60,6 +62,7 @@ export interface EnemyTemplate {
   baseHealth: number;
   actions: EnemyAction[];
   scalingFactor: number;
+  movementPattern?: 'straight' | 'weaver' | 'healer';
 }
 
 export interface EnemyAction {
@@ -108,6 +111,7 @@ export interface GameState {
   energy: number;
   maxEnergy: number;
   floor: number;
+  shards: number;
 
   statusEffects: StatusEffect[];
   relics: Relic[];
@@ -121,8 +125,15 @@ export interface GameState {
   seed: string;
   startTime: number;
 
-  phase: 'battle' | 'reward' | 'gameover' | 'victory';
+  phase: 'battle' | 'reward' | 'shop' | 'gameover' | 'victory';
   score: number;
+  shopState?: ShopState;
+}
+
+export interface ShopState {
+  cards: Card[];
+  relics: Relic[];
+  removalCost: number;
 }
 
 export interface GameRun {

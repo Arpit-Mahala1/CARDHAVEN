@@ -3,6 +3,7 @@ import { GameState } from '../types';
 import BattleScreen from '../components/BattleScreen';
 import RewardScreen from '../components/RewardScreen';
 import GameOverScreen from '../components/GameOverScreen';
+import ShopScreen from '../components/ShopScreen';
 // import { User } from 'firebase/auth';
 
 interface GamePageProps {
@@ -12,6 +13,10 @@ interface GamePageProps {
   onEndTurn: () => void;
   onPickRewardCard: (card: any) => void;
   onSkipReward: () => void;
+  onBuyCard: (index: number, cost: number) => void;
+  onBuyRelic: (index: number, cost: number) => void;
+  onRemoveCard: (index: number, cost: number) => void;
+  onLeaveShop: () => void;
   onMainMenu: () => void;
 }
 
@@ -22,6 +27,10 @@ export default function GamePage({
   onEndTurn,
   onPickRewardCard,
   onSkipReward,
+  onBuyCard,
+  onBuyRelic,
+  onRemoveCard,
+  onLeaveShop,
   onMainMenu,
 }: GamePageProps) {
   
@@ -46,6 +55,16 @@ export default function GamePage({
           floor={gameState.floor}
           onPickCard={onPickRewardCard}
           onSkip={onSkipReward}
+        />
+      )}
+
+      {gameState.phase === 'shop' && (
+        <ShopScreen
+          gameState={gameState}
+          onBuyCard={onBuyCard}
+          onBuyRelic={onBuyRelic}
+          onRemoveCard={onRemoveCard}
+          onLeave={onLeaveShop}
         />
       )}
 

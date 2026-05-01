@@ -1,5 +1,11 @@
-import { GameState, Card, Enemy, StatusEffect, StatusEffectType, Intent } from '../types';
-import { GAME_CONSTANTS } from './balanceData';
+import { 
+  Card, Enemy, GameState, Intent, 
+  StatusEffectType, Relic, ShopState, StatusEffect
+} from '../types';
+import cardData from '../data/cards.json';
+import enemyData from '../data/enemies.json';
+import relicData from '../data/relics.json';
+import { GAME_CONSTANTS, STATUS_EFFECTS } from './balanceData';
 import { generateEnemyEncounter } from './enemyGenerator';
 
 export class BattleEngine {
@@ -23,23 +29,31 @@ export class BattleEngine {
 
     // Determine targets based on targetType
     let targets: Enemy[] = [];
-    if (card.targetType === 'cell' && targetX !== undefined && targetY !== undefined) {
-      const enemy = this.state.enemies.find(e => e.boardX === targetX && e.boardY === targetY && e.health > 0);
-      if (enemy) targets = [enemy];
-      // Even if no enemy, we allow playing the card if it's targeted at an empty cell?
-      // Typically roguelikes require a valid target. Let's require a target for 'cell' unless it doesn't do damage.
-      if (card.effect.damage && targets.length === 0) return false;
+    if ((card.targetType === 'cell' || !card.targetType) && targetX !== undefined && targetY !== undefined) {
+      if (card.effect.area === '2x2') {
+        targets = this.state.enemies.filter(e => 
+          e.boardX >= targetX && e.boardX <= targetX + 1 && 
+          e.boardY >= targetY && e.boardY <= targetY + 1 && 
+          e.health > 0
+        );
+      } else if (card.effect.area === 'cross') {
+        targets = this.state.enemies.filter(e => 
+          ((e.boardX === targetX && Math.abs(e.boardY - targetY) <= 1) ||
+           (e.boardY === targetY && Math.abs(e.boardX - targetX) <= 1)) && 
+          e.health > 0
+        );
+      } else {
+        const enemy = this.state.enemies.find(e => e.boardX === targetX && e.boardY === targetY && e.health > 0);
+        if (enemy) targets = [enemy];
+      }
+      
+      if (card.effect.damage && targets.length === 0 && !card.effect.knockback) return false;
     } else if (card.targetType === 'row' && targetY !== undefined) {
       targets = this.state.enemies.filter(e => e.boardY === targetY && e.health > 0);
     } else if (card.targetType === 'column' && targetX !== undefined) {
       targets = this.state.enemies.filter(e => e.boardX === targetX && e.health > 0);
     } else if (card.targetType === 'none') {
       // no targets needed
-    } else if (!card.targetType) {
-      // Default to cell targeting logic if missing
-      const enemy = this.state.enemies.find(e => e.boardX === targetX && e.boardY === targetY && e.health > 0);
-      if (enemy) targets = [enemy];
-      if (card.effect.damage && targets.length === 0) return false;
     }
 
     // Deduct energy
@@ -99,12 +113,36 @@ export class BattleEngine {
           const absorbed = Math.min(currentTarget.block, damage);
           const remaining = damage - absorbed;
 
-          const updatedEnemies = this.state.enemies.map(e =>
-            e.id === targetId
-              ? { ...e, block: e.block - absorbed, health: Math.max(0, e.health - remaining) }
-              : e
-          );
-          this.state = { ...this.state, enemies: updatedEnemies };
+          let shardsGained = 0;
+          const updatedEnemies = this.state.enemies.map(e => {
+            if (e.id === targetId) {
+              const newHealth = Math.max(0, e.health - remaining);
+              if (e.health > 0 && newHealth === 0) {
+                shardsGained += Math.max(1, Math.floor(e.maxHealth / 5));
+              }
+              
+              let finalY = e.boardY;
+              if (effect.knockback && newHealth > 0) {
+                finalY = Math.max(0, e.boardY - effect.knockback);
+                // Simple collision check: if occupied, don't move or move as far as possible
+                const isOccupied = this.state.enemies.some(oe => oe.id !== e.id && oe.boardX === e.boardX && oe.boardY === finalY && oe.health > 0);
+                if (isOccupied) finalY = e.boardY; 
+              }
+
+              return { 
+                ...e, 
+                block: e.block - absorbed, 
+                health: newHealth,
+                boardY: finalY
+              };
+            }
+            return e;
+          });
+          this.state = { 
+            ...this.state, 
+            enemies: updatedEnemies,
+            shards: this.state.shards + shardsGained
+          };
         }
       }
     }
@@ -222,6 +260,20 @@ export class BattleEngine {
     let damageToPlayer = 0;
     
     const updatedEnemies = this.state.enemies.filter(e => e.health > 0).map(enemy => {
+      // 1. Horizontal Movement (for Weaver type enemies)
+      // Note: We check ID or a hypothetical property. For now, let's look at templateId.
+      if (enemy.templateId === 'weaver' || enemy.templateId === 'skeleton_weaver') {
+        const direction = Math.random() > 0.5 ? 1 : -1;
+        const newX = enemy.boardX + direction;
+        if (newX >= 0 && newX < 4) {
+          const isOccupied = this.state.enemies.some(oe => oe.id !== enemy.id && oe.boardX === newX && oe.boardY === enemy.boardY && oe.health > 0);
+          if (!isOccupied) {
+            enemy = { ...enemy, boardX: newX };
+          }
+        }
+      }
+
+      // 2. Vertical Movement
       // Check if enemy is blocked by another enemy below it
       const enemyBelow = this.state.enemies.find(other => other.boardX === enemy.boardX && other.boardY === enemy.boardY + 1 && other.health > 0);
       
@@ -486,6 +538,19 @@ export class BattleEngine {
       return;
     }
 
+    if (nextFloor % 5 === 0) {
+      this.state = {
+        ...this.state,
+        floor: nextFloor,
+        phase: 'shop',
+        shopState: this.generateShopState(),
+        block: 0,
+        energy: this.state.maxEnergy,
+        hand: [],
+      };
+      return;
+    }
+
     // Generate new enemies
     const newEnemies = generateEnemyEncounter(nextFloor);
 
@@ -500,6 +565,81 @@ export class BattleEngine {
     };
 
     // Draw initial hand
+    this.drawCards(GAME_CONSTANTS.STARTING_HAND_SIZE);
+  }
+
+  private generateShopState() {
+    // Pick 3 random cards
+    const allCards = (cardData as { cards: Card[] }).cards;
+    const shopCards = [...allCards].sort(() => 0.5 - Math.random()).slice(0, 3);
+    
+    // Pick 1 random relic
+    const allRelics = (relicData as { relics: Relic[] }).relics;
+    const shopRelics = [...allRelics].sort(() => 0.5 - Math.random()).slice(0, 1);
+
+    return {
+      cards: shopCards,
+      relics: shopRelics,
+      removalCost: 50
+    };
+  }
+
+  buyCard(cardIndex: number, cost: number): boolean {
+    if (this.state.shards < cost || !this.state.shopState) return false;
+    
+    const card = this.state.shopState.cards[cardIndex];
+    this.addCardToDeck(card);
+    
+    const newShopCards = [...this.state.shopState.cards];
+    newShopCards.splice(cardIndex, 1);
+    
+    this.state = {
+      ...this.state,
+      shards: this.state.shards - cost,
+      shopState: { ...this.state.shopState, cards: newShopCards }
+    };
+    return true;
+  }
+
+  buyRelic(relicIndex: number, cost: number): boolean {
+    if (this.state.shards < cost || !this.state.shopState) return false;
+    
+    const relic = this.state.shopState.relics[relicIndex];
+    
+    const newShopRelics = [...this.state.shopState.relics];
+    newShopRelics.splice(relicIndex, 1);
+    
+    this.state = {
+      ...this.state,
+      shards: this.state.shards - cost,
+      relics: [...this.state.relics, relic],
+      shopState: { ...this.state.shopState, relics: newShopRelics }
+    };
+    return true;
+  }
+
+  removeCardFromDeck(cardIndex: number, cost: number): boolean {
+    if (this.state.shards < cost) return false;
+    
+    const newDeck = [...this.state.deck];
+    newDeck.splice(cardIndex, 1);
+    
+    this.state = {
+      ...this.state,
+      shards: this.state.shards - cost,
+      deck: newDeck
+    };
+    return true;
+  }
+
+  leaveShop(): void {
+    const newEnemies = generateEnemyEncounter(this.state.floor);
+    this.state = {
+      ...this.state,
+      phase: 'battle',
+      enemies: newEnemies,
+      shopState: undefined
+    };
     this.drawCards(GAME_CONSTANTS.STARTING_HAND_SIZE);
   }
 }
