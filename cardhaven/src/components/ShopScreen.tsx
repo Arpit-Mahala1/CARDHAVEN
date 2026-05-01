@@ -26,11 +26,11 @@ export default function ShopScreen({
   const cardCosts = [50, 75, 125, 250]; // Based on rarity or just fixed? Let's use simple costs.
   const getCardCost = (rarity: string) => {
     switch(rarity) {
-      case 'common': return 50;
-      case 'uncommon': return 80;
-      case 'rare': return 150;
-      case 'legendary': return 300;
-      default: return 50;
+      case 'common': return 25;
+      case 'uncommon': return 50;
+      case 'rare': return 100;
+      case 'legendary': return 200;
+      default: return 25;
     }
   };
 
@@ -85,7 +85,7 @@ export default function ShopScreen({
             <h3 className="text-sm uppercase tracking-widest text-text-muted font-bold border-b border-white border-opacity-10 pb-2">Sacred Relics</h3>
             <div className="flex gap-6">
               {shop.relics.map((relic, i) => {
-                const cost = 200; // Fixed relic cost for now
+                const cost = 100; // Fixed relic cost for now
                 const canAfford = gameState.shards >= cost;
                 return (
                   <div key={i} className="flex items-center gap-6 glass-panel p-4 border-opacity-20 flex-1">

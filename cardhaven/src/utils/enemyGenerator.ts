@@ -11,8 +11,8 @@ export function generateEnemyEncounter(floor: number): Enemy[] {
 
   // Pick enemies appropriate to floor
   const availableTemplates = templates.filter((_, i) => {
-    if (floor < 5) return i < 2; // goblin, skeleton only
-    if (floor < 10) return i < 4; // + witch, knight
+    if (floor < 5) return i < 3; // + weaver
+    if (floor < 10) return i < 5; // + witch, knight
     return true; // all including demon
   });
 

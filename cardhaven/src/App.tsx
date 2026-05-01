@@ -57,6 +57,7 @@ function App() {
           onBuyRelic={buyRelic}
           onRemoveCard={removeCard}
           onLeaveShop={leaveShop}
+          onExit={() => setScreen('menu')}
           onMainMenu={() => setScreen('menu')}
         />
       )}

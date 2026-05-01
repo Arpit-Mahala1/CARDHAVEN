@@ -78,6 +78,8 @@ export class BattleEngine {
 
   private applyCardEffect(card: Card, targets: Enemy[]): void {
     const effect = card.effect;
+
+    // 1. Calculate Damage
     const hits = effect.hits ?? 1;
 
     // Strength bonus
@@ -118,7 +120,7 @@ export class BattleEngine {
             if (e.id === targetId) {
               const newHealth = Math.max(0, e.health - remaining);
               if (e.health > 0 && newHealth === 0) {
-                shardsGained += Math.max(1, Math.floor(e.maxHealth / 5));
+                shardsGained += Math.max(5, Math.floor(e.maxHealth / 2));
               }
               
               let finalY = e.boardY;
@@ -147,7 +149,7 @@ export class BattleEngine {
       }
     }
 
-    // Block
+    // 2. Block
     if (effect.block) {
       let blockAmount = effect.block;
 
@@ -162,12 +164,12 @@ export class BattleEngine {
       this.state = { ...this.state, block: this.state.block + blockAmount };
     }
 
-    // Draw
+    // 3. Draw
     if (effect.draw) {
       this.drawCards(effect.draw);
     }
 
-    // Heal
+    // 4. Heal
     if (effect.heal) {
       this.state = {
         ...this.state,
@@ -175,7 +177,7 @@ export class BattleEngine {
       };
     }
 
-    // Status effects
+    // 5. Status effects (Applied AFTER damage)
     if (effect.statusEffects) {
       effect.statusEffects.forEach(se => {
         if (effect.applyToSelf) {
@@ -284,7 +286,16 @@ export class BattleEngine {
       if (enemy.boardY >= 5) {
         // Enemy reached the bottom
         const action = enemy.actions[enemy.currentActionIndex % enemy.actions.length];
-        const atkDamage = action.damage || Math.floor(enemy.maxHealth * 0.5) || 1;
+        let atkDamage = action.damage || Math.floor(enemy.maxHealth * 0.5) || 1;
+
+        // Apply enemy status effects
+        const enemyWeak = enemy.statusEffects.find(s => s.type === 'weak');
+        if (enemyWeak) atkDamage = Math.floor(atkDamage * 0.75);
+
+        // Apply player status effects
+        const playerVuln = this.state.statusEffects.find(s => s.type === 'vulnerable');
+        if (playerVuln) atkDamage = Math.floor(atkDamage * 1.5);
+
         damageToPlayer += atkDamage;
         return null; // Remove enemy
       }
@@ -294,7 +305,6 @@ export class BattleEngine {
     this.state = { ...this.state, enemies: updatedEnemies };
 
     if (damageToPlayer > 0) {
-      const weakEffect = this.state.statusEffects.find(s => s.type === 'weak');
       // Player block absorbs damage
       const absorbed = Math.min(this.state.block, damageToPlayer);
       const remaining = damageToPlayer - absorbed;
@@ -413,8 +423,13 @@ export class BattleEngine {
     this.state = {
       ...this.state,
       statusEffects: this.state.statusEffects
-        .map(se => ({ ...se, turnsRemaining: se.turnsRemaining - 1 }))
-        .filter(se => se.turnsRemaining > 0 && se.stacks > 0),
+        .map(se => {
+          if (['weak', 'vulnerable', 'frail'].includes(se.type)) {
+            return { ...se, stacks: se.stacks - 1 };
+          }
+          return se;
+        })
+        .filter(se => se.stacks > 0),
     };
   }
 
@@ -422,8 +437,15 @@ export class BattleEngine {
     const updatedEnemies = this.state.enemies.map(enemy => ({
       ...enemy,
       statusEffects: enemy.statusEffects
-        .map(se => ({ ...se, turnsRemaining: se.turnsRemaining - 1 }))
-        .filter(se => se.turnsRemaining > 0 && se.stacks > 0),
+        .map(se => {
+          if (['weak', 'vulnerable', 'frail', 'poison'].includes(se.type)) {
+            // Note: Poison usually decays after dealing damage. 
+            // In this game, let's just make it decay at turn start.
+            return { ...se, stacks: se.stacks - 1 };
+          }
+          return se;
+        })
+        .filter(se => se.stacks > 0),
     }));
     this.state = { ...this.state, enemies: updatedEnemies };
   }
@@ -538,7 +560,7 @@ export class BattleEngine {
       return;
     }
 
-    if (nextFloor % 5 === 0) {
+    if (nextFloor % 2 === 0) {
       this.state = {
         ...this.state,
         floor: nextFloor,
@@ -580,7 +602,7 @@ export class BattleEngine {
     return {
       cards: shopCards,
       relics: shopRelics,
-      removalCost: 50
+      removalCost: 25
     };
   }
 

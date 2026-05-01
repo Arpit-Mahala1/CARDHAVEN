@@ -17,6 +17,7 @@ interface GamePageProps {
   onBuyRelic: (index: number, cost: number) => void;
   onRemoveCard: (index: number, cost: number) => void;
   onLeaveShop: () => void;
+  onExit: () => void;
   onMainMenu: () => void;
 }
 
@@ -31,6 +32,7 @@ export default function GamePage({
   onBuyRelic,
   onRemoveCard,
   onLeaveShop,
+  onExit,
   onMainMenu,
 }: GamePageProps) {
   
@@ -46,6 +48,7 @@ export default function GamePage({
           gameState={gameState}
           onPlayCard={onPlayCard}
           onEndTurn={onEndTurn}
+          onExit={onExit}
         />
       )}
 

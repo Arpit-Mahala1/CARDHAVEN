@@ -152,6 +152,7 @@ function getStarterDeck(characterClass: string): Card[] {
   // Give 4x Strike + 4x Defend + 2 class-specific cards
   const strike = allCards.find(c => c.id === 'strike')!;
   const defend = allCards.find(c => c.id === 'defend')!;
+  const forceWave = allCards.find(c => c.id === 'force_wave')!;
 
   let classBonusId = 'bash';
   if (characterClass === 'mage') classBonusId = 'poison_gas';
@@ -160,7 +161,7 @@ function getStarterDeck(characterClass: string): Card[] {
   const classCard = allCards.find(c => c.id === classBonusId) ?? commons[0];
 
   return [
-    strike, strike, strike, strike,
+    strike, strike, strike, forceWave,
     defend, defend, defend, defend,
     classCard, classCard,
   ];

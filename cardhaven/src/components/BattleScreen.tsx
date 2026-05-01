@@ -8,12 +8,14 @@ interface BattleScreenProps {
   gameState: GameState;
   onPlayCard: (cardIndex: number, targetX?: number, targetY?: number) => boolean;
   onEndTurn: () => void;
+  onExit: () => void;
 }
 
 export default function BattleScreen({
   gameState,
   onPlayCard,
   onEndTurn,
+  onExit,
 }: BattleScreenProps) {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
 
@@ -80,6 +82,20 @@ export default function BattleScreen({
 
   return (
     <div className="flex flex-col h-screen w-full relative overflow-hidden animate-fade-in">
+      {/* Exit Button */}
+      <button 
+        onClick={() => {
+          if (window.confirm("Are you sure you want to exit? All progress in this run will be lost.")) {
+            onExit();
+          }
+        }}
+        className="absolute top-4 left-4 z-50 p-2 glass-panel border-opacity-20 hover:border-opacity-50 text-text-muted hover:text-danger transition-all group flex items-center gap-2"
+        title="Exit to Main Menu"
+      >
+        <span className="text-xl">🚪</span>
+        <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold uppercase tracking-widest">Quit Run</span>
+      </button>
+
       {/* Background Particles (CSS simulated) */}
       <div className="absolute inset-0 pointer-events-none opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] animate-shimmer" />
 
