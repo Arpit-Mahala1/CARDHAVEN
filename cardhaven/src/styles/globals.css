@@ -244,6 +244,11 @@ button {
   background: linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-gold-light));
 }
 
+/* ─── Main Menu fixes ─────────────────────────────────────────── */
+.main-menu-root .glass-panel:empty,
+.main-menu-root button:empty {
+  display: none !important;
+}
 /* ─── Animations ─────────────────────────────────────────────── */
 @keyframes floatParticle {
   0% { transform: translateY(0) translateX(0); opacity: 0; }

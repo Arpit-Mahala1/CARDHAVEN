@@ -17,6 +17,12 @@ export default {
         'bg-secondary': '#1a1f3a',
         'text-primary': '#f5f1e8',
         'text-secondary': '#a0a0a0',
+        'accent-gold': '#c5a059',
+        'accent-red': '#4a0e0e',
+        'accent-blue': '#1b2d3c',
+        'accent-purple': '#2d1b3c',
+        'accent-green': '#3d5a45',
+        'accent-muted': '#605840',
       },
       fontFamily: {
         'serif': ['"Crimson Text"', 'serif'],

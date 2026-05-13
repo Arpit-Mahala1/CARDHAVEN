@@ -23,7 +23,7 @@ export default function GameOverScreen({ gameState, user, onMainMenu }: GameOver
     const entry: LeaderboardEntry = {
       runId: gameState.runId,
       playerId: user.uid,
-      playerName: user.displayName || user.email?.split('@')[0] || 'Unknown Hero',
+      playerName: (user.displayName?.trim() || user.email?.split('@')[0] || 'Unknown Hero'),
       score: gameState.score,
       floor: gameState.floor,
       characterClass: gameState.characterClass,

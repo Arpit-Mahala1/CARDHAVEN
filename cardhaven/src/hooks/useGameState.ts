@@ -91,19 +91,24 @@ export function useGameState(autoEndTurn: boolean = false) {
       if (engine.checkBattleEnd() === 'won') {
         engine.advanceToReward();
         setGameState(engine.getState());
-      } else if (autoEndTurn) {
-        // Auto-end turn check: No energy and no 0-cost cards
-        const hasPlayableCards = newState.hand.some(card => card.cost <= newState.energy);
-        if (!hasPlayableCards && newState.isPlayerTurn) {
-          // Delay end turn slightly for visual feedback
-          setTimeout(() => {
-            endTurn();
-          }, 600);
-        }
       }
     }
     return success;
-  }, [autoEndTurn, endTurn]);
+  }, []);
+
+  // Robust Auto End Turn Logic
+  useEffect(() => {
+    if (!autoEndTurn || !gameState || !gameState.isPlayerTurn || gameState.phase !== 'battle') return;
+
+    const hasPlayableCards = gameState.hand.some(card => card.cost <= gameState.energy);
+    
+    if (!hasPlayableCards) {
+      const timer = setTimeout(() => {
+        endTurn();
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [gameState, autoEndTurn, endTurn]);
 
   const pickRewardCard = useCallback((card: Card) => {
     const engine = engineRef.current;

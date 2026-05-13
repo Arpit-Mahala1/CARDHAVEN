@@ -60,8 +60,7 @@ export default function Card({ card, selected, playable, onClick }: CardProps) {
 
       {/* Art Area (Atmospheric) */}
       <div className="flex-1 flex items-center justify-center bg-black bg-opacity-40 border-y border-white border-opacity-5 my-2 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60" />
-        <span className="text-4xl z-10 drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" style={{ color: CARD_TYPE_COLORS[card.cardType] }}>
+        <span className="text-4xl z-10" style={{ color: CARD_TYPE_COLORS[card.cardType] }}>
           {getCardIcon(card.cardType)}
         </span>
       </div>

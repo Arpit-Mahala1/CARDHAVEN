@@ -61,16 +61,16 @@ export default function BattleScreen({
   const healthPercent = Math.max(0, Math.min(100, (gameState.health / gameState.maxHealth) * 100));
   const energyPercent = Math.max(0, Math.min(100, (gameState.energy / gameState.maxEnergy) * 100));
 
-  // Generate grid cells (4 columns, 5 rows)
+  // Generate grid cells (5 columns, 4 rows)
   const gridCells = [];
-  for (let y = 0; y < 5; y++) {
-    for (let x = 0; x < 4; x++) {
+  for (let y = 0; y < 4; y++) {
+    for (let x = 0; x < 5; x++) {
       const enemy = gameState.enemies.find(e => e.boardX === x && e.boardY === y && e.health > 0);
       gridCells.push(
         <div 
           key={`${x}-${y}`} 
           onClick={() => handleGridCellClick(x, y)}
-          className={`w-full h-24 border border-white border-opacity-10 rounded-xl bg-black bg-opacity-20 flex items-center justify-center transition-colors
+          className={`w-full h-full min-h-[112px] border border-white border-opacity-8 rounded-xl bg-black bg-opacity-20 flex items-center justify-center transition-colors
             ${selectedCard !== null ? 'hover:bg-white hover:bg-opacity-10 cursor-pointer border-opacity-30' : ''}
           `}
         >
@@ -98,18 +98,18 @@ export default function BattleScreen({
             onExit();
           }
         }}
-        className="absolute top-6 left-8 z-50 p-3 glass-panel border-opacity-10 hover:border-opacity-40 text-text-muted hover:text-accent-gold transition-all group flex items-center gap-3"
+        className="absolute top-6 left-8 z-50 p-2 glass-panel border-accent-red border-opacity-20 hover:border-opacity-60 text-text-muted hover:text-accent-red transition-all group flex items-center gap-3 bg-black bg-opacity-40"
         title="Abandon Run"
       >
-        <span className="text-xl">🕯️</span>
-        <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase tracking-[0.3em] font-bold">Abandon</span>
+        <span className="text-lg">🕯️</span>
+        <span className="transition-opacity text-[9px] uppercase tracking-[0.3em] font-bold">Abandon</span>
       </button>
 
       {/* Main Content Area */}
       <div className="flex flex-1 w-full max-w-[1400px] mx-auto px-8 py-4 gap-8 overflow-hidden">
         
         {/* Left Side: Stats & Info (Scrollable if needed) */}
-        <div className="flex flex-col gap-4 w-72 h-full overflow-y-auto no-scrollbar py-8">
+        <div className="flex flex-col gap-4 w-72 h-[78vh] overflow-y-auto no-scrollbar mt-16">
           <div className="glass-panel p-6 flex flex-col gap-6 border-opacity-10">
             {/* Class & Floor */}
             <div className="flex flex-col gap-1">
@@ -206,17 +206,18 @@ export default function BattleScreen({
         </div>
 
         {/* Center: The Grid */}
-        <div className="flex-1 flex justify-center items-start pt-8 z-10">
-          <div className="grid grid-cols-4 grid-rows-5 gap-3 w-full max-w-2xl aspect-[4/5] p-6 glass-panel-dark shadow-2xl relative border-opacity-5">
+        <div className="flex-1 flex justify-center items-center py-2 z-10 min-h-0">
+          <div className="grid grid-cols-5 grid-rows-4 gap-4 w-full h-[72vh] p-8 glass-panel-dark shadow-2xl relative border-opacity-5">
             {/* Defensive Line Indicator */}
             <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-accent-red bg-opacity-20 shadow-[0_-10px_30px_rgba(74,14,14,0.4)] z-0" />
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-[8px] text-accent-red font-serif font-bold tracking-[0.6em] opacity-40 z-0 whitespace-nowrap">
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-[8px] text-accent-red font-serif font-bold tracking-[0.6em] opacity-40 z-0 whitespace-nowrap">
               THE THRESHOLD
             </div>
 
             {gridCells}
           </div>
         </div>
+
       </div>
 
       {/* Bottom: Hand & Deck Info (Non-absolute for layout stability) */}

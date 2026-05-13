@@ -24,7 +24,7 @@ export default function MainMenu({
   const [selectedClass, setSelectedClass] = useState<'warrior' | 'mage' | 'rogue'>('warrior');
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 relative overflow-hidden animate-fade-in bg-black">
+    <div className="main-menu-root flex flex-col items-center justify-center min-h-screen p-4 relative overflow-hidden animate-fade-in bg-black">
       
       {/* Auth Status Bar */}
       <div className="absolute top-6 right-8 flex items-center gap-6 z-20">
@@ -110,7 +110,7 @@ export default function MainMenu({
           {localStorage.getItem('cardhaven_run') && (
             <button 
               onClick={onResumeRun}
-              className="w-full bg-accent-gold text-black text-xs uppercase tracking-[0.3em] py-5 shadow-gold hover:tracking-[0.4em] transition-all mb-4"
+              className="btn-primary w-full text-[10px] font-bold uppercase tracking-[0.3em] py-5 shadow-gold hover:tracking-[0.4em] transition-all mb-4"
             >
               Continue Descent
             </button>

@@ -162,17 +162,20 @@ export class BattleEngine {
           const remaining = damage - absorbed;
 
           let shardsGained = 0;
+          let killsThisHit = 0;
+          let damageThisHit = remaining + absorbed;
+
           const updatedEnemies = this.state.enemies.map(e => {
             if (e.id === targetId) {
               const newHealth = Math.max(0, e.health - remaining);
               if (e.health > 0 && newHealth === 0) {
                 shardsGained += Math.max(5, Math.floor(e.maxHealth / 2));
+                killsThisHit++;
               }
               
               let finalY = e.boardY;
               if (effect.knockback && newHealth > 0) {
                 finalY = Math.max(0, e.boardY - effect.knockback);
-                // Simple collision check: if occupied, don't move or move as far as possible
                 const isOccupied = this.state.enemies.some(oe => oe.id !== e.id && oe.boardX === e.boardX && oe.boardY === finalY && oe.health > 0);
                 if (isOccupied) finalY = e.boardY; 
               }
@@ -186,10 +189,14 @@ export class BattleEngine {
             }
             return e;
           });
+
           this.state = { 
             ...this.state, 
             enemies: updatedEnemies,
-            shards: this.state.shards + shardsGained
+            shards: this.state.shards + shardsGained,
+            totalDamageDealt: this.state.totalDamageDealt + damageThisHit,
+            enemiesKilled: this.state.enemiesKilled + killsThisHit,
+            score: this.state.score + (damageThisHit * 1) + (killsThisHit * 50)
           };
         }
       }
@@ -346,7 +353,7 @@ export class BattleEngine {
       if (enemy.templateId === 'weaver' || enemy.templateId === 'skeleton_weaver') {
         const direction = Math.random() > 0.5 ? 1 : -1;
         const newX = enemy.boardX + direction;
-        if (newX >= 0 && newX < 4) {
+        if (newX >= 0 && newX < 5) {
           const isOccupied = this.state.enemies.some(oe => oe.id !== enemy.id && oe.boardX === newX && oe.boardY === enemy.boardY && oe.health > 0);
           if (!isOccupied) {
             enemy = { ...enemy, boardX: newX };
@@ -362,7 +369,7 @@ export class BattleEngine {
         enemy = { ...enemy, boardY: enemy.boardY + 1 };
       }
 
-      if (enemy.boardY >= 5) {
+      if (enemy.boardY >= 4) {
         // Enemy reached the bottom
         const action = enemy.actions[enemy.currentActionIndex % enemy.actions.length];
         let atkDamage = action.damage || Math.floor(enemy.maxHealth * 0.5) || 1;
@@ -407,7 +414,7 @@ export class BattleEngine {
 
     // Find empty columns in top row
     const occupiedColumns = this.state.enemies.filter(e => e.boardY === 0).map(e => e.boardX);
-    const freeColumns = [0, 1, 2, 3].filter(col => !occupiedColumns.includes(col));
+    const freeColumns = [0, 1, 2, 3, 4].filter(col => !occupiedColumns.includes(col));
 
     if (freeColumns.length === 0) return;
 

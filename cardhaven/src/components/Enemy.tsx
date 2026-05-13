@@ -41,26 +41,44 @@ export default function Enemy({ enemy, selected, onClick }: EnemyProps) {
     >
       {/* Enemy Portrait (Ink Blot Style) */}
       <div className="relative w-16 h-16 flex items-center justify-center mb-2">
-        <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full blur-xl scale-75 group-hover:scale-90 transition-transform" />
-        <span className="text-4xl filter drop-shadow-[0_0_8px_rgba(0,0,0,0.8)] z-10 animate-float opacity-80 group-hover:opacity-100 transition-opacity">
+        <span className="text-4xl z-10 animate-float opacity-90 transition-opacity">
           {getEnemyIcon(enemy.templateId)}
         </span>
       </div>
+
+      {/* Status Effects (inline to avoid overlap) */}
+      {enemy.statusEffects.length > 0 && !isDead && (
+        <div className="w-full flex justify-center gap-2 mb-2 z-10">
+          {enemy.statusEffects.map((effect, i) => {
+            const effectData = STATUS_EFFECTS[effect.type];
+            return (
+              <div
+                key={i}
+                className="w-6 h-6 bg-bg-primary border border-white border-opacity-5 flex items-center justify-center text-[10px] font-bold shadow-sm relative"
+                title={effectData?.description.replace('{stacks}', effect.stacks.toString())}
+              >
+                <span className="opacity-90 z-10">{effectData?.icon}</span>
+                <span className="absolute -top-2 -right-1 text-[8px] bg-accent-gold text-bg-primary font-bold px-0.5 rounded-sm">{effect.stacks}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Enemy Info */}
       <div className="w-full text-center z-10">
         {/* Health Bar */}
         <div className="flex flex-col gap-1 w-full px-2">
-          <div className="stat-bar-track h-1 bg-black bg-opacity-60 overflow-hidden rounded-none border-x border-white border-opacity-5">
+          <div className="stat-bar-track h-2 bg-black bg-opacity-60 overflow-hidden rounded-md border-x border-white border-opacity-5">
             <div 
-              className="stat-bar-fill health shadow-[0_0_8px_rgba(74,14,14,0.6)]" 
+              className="stat-bar-fill health shadow-[0_0_6px_rgba(74,14,14,0.45)]" 
               style={{ 
                 width: `${healthPercent}%`,
                 background: 'linear-gradient(90deg, #4a0e0e, #6a1e1e)' 
               }} 
             />
           </div>
-          <span className="text-[8px] font-mono font-bold text-text-muted opacity-60 tracking-widest">{enemy.health}/{enemy.maxHealth}</span>
+          <span className="text-[9px] font-mono font-bold text-text-muted opacity-80 tracking-widest">{enemy.health}/{enemy.maxHealth}</span>
         </div>
 
         {/* Block */}
@@ -87,26 +105,7 @@ export default function Enemy({ enemy, selected, onClick }: EnemyProps) {
         </div>
       )}
 
-      {/* Status Effects */}
-      {enemy.statusEffects.length > 0 && !isDead && (
-        <div className="absolute -bottom-1 flex gap-1 justify-center w-full z-20">
-          {enemy.statusEffects.map((effect, i) => {
-            const effectData = STATUS_EFFECTS[effect.type];
-            return (
-              <div
-                key={i}
-                className="w-5 h-5 bg-bg-primary border border-white border-opacity-5 flex items-center justify-center text-[9px] font-bold shadow-xl relative group/effect"
-                title={effectData?.description.replace('{stacks}', effect.stacks.toString())}
-              >
-                <span className="relative z-10 opacity-80">{effectData?.icon}</span>
-                <span className="absolute -top-1 -right-1 text-[7px] bg-accent-gold text-bg-primary font-bold px-0.5 rounded-sm min-w-[10px] text-center">
-                  {effect.stacks}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
+
     </div>
   );
 }

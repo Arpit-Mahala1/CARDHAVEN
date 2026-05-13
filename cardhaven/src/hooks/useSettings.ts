@@ -7,7 +7,7 @@ const DEFAULT_SETTINGS: GameSettings = {
   sfxVolume: 0.8,
   reducedMotion: false,
   showDamageNumbers: true,
-  autoEndTurn: false,
+  autoEndTurn: true,
 };
 
 export function useSettings() {
