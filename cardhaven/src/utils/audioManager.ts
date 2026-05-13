@@ -6,7 +6,8 @@ class AudioManager {
   private masterGain: GainNode | null = null;
   private sfxGain: GainNode | null = null;
   private musicGain: GainNode | null = null;
-  private ambientOsc: OscillatorNode | null = null;
+  private ambientOscillators: OscillatorNode[] = [];
+  private ambientGainNodes: GainNode[] = [];
 
   private constructor() {}
 
@@ -45,26 +46,65 @@ class AudioManager {
   private startAmbient() {
     if (!this.audioCtx || !this.musicGain) return;
 
-    // Create a dark, low ambient drone
-    const osc1 = this.audioCtx.createOscillator();
-    const osc2 = this.audioCtx.createOscillator();
-    const gain = this.audioCtx.createGain();
+    // Create a rich ambient pad with multiple layers and evolving frequencies
+    const baseFrequencies = [55, 110, 165, 220]; // A2, A3, E4, A4 - A minor chord
+    const layers = [
+      { freq: 55, type: 'sine' as const, detune: 0 },
+      { freq: 55.2, type: 'sine' as const, detune: 10 },
+      { freq: 110, type: 'triangle' as const, detune: 0 },
+      { freq: 110.5, type: 'triangle' as const, detune: -10 },
+      { freq: 165, type: 'sine' as const, detune: 0 },
+      { freq: 220, type: 'sine' as const, detune: 5 },
+    ];
 
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(40, this.audioCtx.currentTime); // Low E
-    
-    osc2.type = 'triangle';
-    osc2.frequency.setValueAtTime(40.5, this.audioCtx.currentTime); // Detuned
+    const masterAmbientGain = this.audioCtx.createGain();
+    masterAmbientGain.gain.setValueAtTime(1, this.audioCtx.currentTime);
+    masterAmbientGain.connect(this.musicGain);
 
-    gain.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
-    
-    osc1.connect(gain);
-    osc2.connect(gain);
-    gain.connect(this.musicGain);
+    layers.forEach((layer, idx) => {
+      const osc = this.audioCtx!.createOscillator();
+      const gain = this.audioCtx!.createGain();
+      const lfo = this.audioCtx!.createOscillator();
+      const lfoGain = this.audioCtx!.createGain();
 
-    osc1.start();
-    osc2.start();
-    this.ambientOsc = osc1; // Keep reference to prevent GC
+      osc.type = layer.type;
+      osc.frequency.setValueAtTime(layer.freq, this.audioCtx!.currentTime);
+      osc.detune.setValueAtTime(layer.detune, this.audioCtx!.currentTime);
+
+      // LFO (Low Frequency Oscillator) for subtle modulation
+      lfo.type = 'sine';
+      lfo.frequency.setValueAtTime(0.3 + idx * 0.05, this.audioCtx!.currentTime);
+      lfoGain.gain.setValueAtTime(5 + idx * 2, this.audioCtx!.currentTime);
+
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+
+      // Individual layer gain with envelope
+      gain.gain.setValueAtTime(0.08 + (idx % 2) * 0.04, this.audioCtx!.currentTime);
+
+      osc.connect(gain);
+      gain.connect(masterAmbientGain);
+
+      osc.start();
+      lfo.start();
+
+      this.ambientOscillators.push(osc, lfo);
+      this.ambientGainNodes.push(gain, lfoGain);
+    });
+
+    // Add bass pad - deeper note
+    const bassPad = this.audioCtx.createOscillator();
+    const bassPadGain = this.audioCtx.createGain();
+    bassPad.type = 'sine';
+    bassPad.frequency.setValueAtTime(27.5, this.audioCtx.currentTime); // A1
+    bassPadGain.gain.setValueAtTime(0.15, this.audioCtx.currentTime);
+
+    bassPad.connect(bassPadGain);
+    bassPadGain.connect(masterAmbientGain);
+    bassPad.start();
+
+    this.ambientOscillators.push(bassPad);
+    this.ambientGainNodes.push(bassPadGain);
   }
 
   playSFX(type: 'click' | 'card' | 'hit' | 'block' | 'death') {
