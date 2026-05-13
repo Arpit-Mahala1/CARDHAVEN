@@ -1,4 +1,4 @@
-import { Card, DailyModifier } from '../types';
+import { DailyModifier } from '../types';
 
 export interface DailyRunData {
   seed: string;
@@ -7,10 +7,30 @@ export interface DailyRunData {
 }
 
 const MODIFIERS: DailyModifier[] = [
-  { id: 'bleed_start', name: 'Bleeding Edge', description: 'All enemies start with 2 Bleed, but you start with 20% less Max HP.' },
-  { id: 'glass_cannon', name: 'Glass Cannon', description: 'Deal 50% more damage, but take 50% more damage.' },
-  { id: 'thrifty', name: 'Thrifty', description: 'Everything in the shop costs 50% less.' },
-  { id: 'eldritch_curse', name: 'Eldritch Curse', description: 'Start the run with a random Eldritch card, but 1 random status effect every turn.' },
+  {
+    id: 'bleed_start',
+    name: 'Bleeding Edge',
+    description: 'All enemies start with 2 Bleed, but you start with 20% less Max HP.',
+    icon: '🩸',
+  },
+  {
+    id: 'glass_cannon',
+    name: 'Glass Cannon',
+    description: 'Deal 50% more damage, but take 50% more damage.',
+    icon: '💥',
+  },
+  {
+    id: 'thrifty',
+    name: 'Thrifty',
+    description: 'Everything in the shop costs 50% less.',
+    icon: '💰',
+  },
+  {
+    id: 'eldritch_curse',
+    name: 'Eldritch Curse',
+    description: 'Start the run with a random Eldritch card, but 1 random status effect every turn.',
+    icon: '🧿',
+  },
 ];
 
 export function getDailyRunData(): DailyRunData {

@@ -100,9 +100,17 @@ export function useGameState(autoEndTurn: boolean = false) {
   useEffect(() => {
     if (!autoEndTurn || !gameState || !gameState.isPlayerTurn || gameState.phase !== 'battle') return;
 
-    const hasPlayableCards = gameState.hand.some(card => card.cost <= gameState.energy);
-    
-    if (!hasPlayableCards) {
+    const hasAliveEnemies = gameState.enemies.some(enemy => enemy.health > 0);
+    const hasPlayableCards = gameState.hand.some(card => {
+      if (card.cost > gameState.energy) return false;
+
+      const targetType = card.targetType || 'none';
+      if (targetType === 'none') return true;
+      if (targetType === 'all') return hasAliveEnemies;
+      return hasAliveEnemies;
+    });
+
+    if (!hasPlayableCards || gameState.energy <= 0) {
       const timer = setTimeout(() => {
         endTurn();
       }, 600);
