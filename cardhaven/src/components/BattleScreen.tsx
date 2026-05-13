@@ -109,7 +109,7 @@ export default function BattleScreen({
       <div className="flex flex-1 w-full max-w-[1400px] mx-auto px-8 py-4 gap-8 overflow-hidden">
         
         {/* Left Side: Stats & Info (Scrollable if needed) */}
-        <div className="flex flex-col gap-4 w-72 h-[78vh] overflow-y-auto no-scrollbar mt-16">
+        <div className="flex flex-col gap-4 w-72 relative mt-20 max-h-[calc(100vh-200px)] overflow-y-auto no-scrollbar z-20">
           <div className="glass-panel p-6 flex flex-col gap-6 border-opacity-10">
             {/* Class & Floor */}
             <div className="flex flex-col gap-1">
@@ -174,7 +174,7 @@ export default function BattleScreen({
           </div>
 
           {/* Status Effects & Relics */}
-          <div className="glass-panel p-5 flex flex-col gap-5 border-opacity-10">
+          <div className="glass-panel p-5 flex flex-col gap-5 border-opacity-10 flex-1">
             <div className="flex flex-col gap-2">
               <span className="text-[8px] text-text-muted uppercase font-bold tracking-[0.3em] opacity-60">Afflictions</span>
               <div className="flex gap-2 flex-wrap">
@@ -241,10 +241,13 @@ export default function BattleScreen({
             return (
               <div 
                 key={`${card.id}-${i}`} 
-                className="transition-transform duration-300 -ml-12 first:ml-0 cursor-pointer"
+                className="transition-all duration-300 -ml-8 first:ml-0 cursor-pointer hover:-translate-y-3"
                 style={{ 
-                  transform: selectedCard !== i ? `rotate(${rotation}deg) translateY(${translateY}px)` : 'translateY(-40px) scale(1.1)',
-                  zIndex: selectedCard === i ? 100 : i
+                  transform: selectedCard !== i
+                    ? `rotate(${rotation * 0.5}deg) translateY(${translateY * 0.5}px)`
+                    : 'translateY(-48px) scale(1.08) rotate(0deg)',
+                  zIndex: selectedCard === i ? 100 : i,
+                  filter: selectedCard !== null && selectedCard !== i ? 'brightness(0.8)' : 'none',
                 }}
               >
                 <Card
