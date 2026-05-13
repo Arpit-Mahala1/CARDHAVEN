@@ -4,11 +4,12 @@ import BattleScreen from '../components/BattleScreen';
 import RewardScreen from '../components/RewardScreen';
 import GameOverScreen from '../components/GameOverScreen';
 import ShopScreen from '../components/ShopScreen';
-// import { User } from 'firebase/auth';
+import EventScreen from '../components/EventScreen';
+import RestScreen from '../components/RestScreen';
 
 interface GamePageProps {
   gameState: GameState;
-  user: any; // User type replaced with any
+  user: any;
   onPlayCard: (index: number, x?: number, y?: number) => boolean;
   onEndTurn: () => void;
   onPickRewardCard: (card: any) => void;
@@ -19,6 +20,8 @@ interface GamePageProps {
   onLeaveShop: () => void;
   onExit: () => void;
   onMainMenu: () => void;
+  onEventChoice: (index: number) => void;
+  onRest: (choice: 'heal' | 'upgrade') => void;
 }
 
 export default function GamePage({
@@ -34,6 +37,8 @@ export default function GamePage({
   onLeaveShop,
   onExit,
   onMainMenu,
+  onEventChoice,
+  onRest,
 }: GamePageProps) {
   
   return (
@@ -68,6 +73,26 @@ export default function GamePage({
           onBuyRelic={onBuyRelic}
           onRemoveCard={onRemoveCard}
           onLeave={onLeaveShop}
+        />
+      )}
+
+      {gameState.phase === 'event' && gameState.currentEvent && (
+        <EventScreen
+          event={gameState.currentEvent}
+          floor={gameState.floor}
+          health={gameState.health}
+          maxHealth={gameState.maxHealth}
+          shards={gameState.shards}
+          onChoice={onEventChoice}
+        />
+      )}
+
+      {gameState.phase === 'rest' && (
+        <RestScreen
+          health={gameState.health}
+          maxHealth={gameState.maxHealth}
+          floor={gameState.floor}
+          onRest={onRest}
         />
       )}
 

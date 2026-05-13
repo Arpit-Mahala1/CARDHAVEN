@@ -25,14 +25,24 @@ export default function ShopScreen({
 
   const cardCosts = [50, 75, 125, 250]; // Based on rarity or just fixed? Let's use simple costs.
   const getCardCost = (rarity: string) => {
+    let base = 25;
     switch(rarity) {
-      case 'common': return 25;
-      case 'uncommon': return 50;
-      case 'rare': return 100;
-      case 'legendary': return 200;
-      default: return 25;
+      case 'common': base = 25; break;
+      case 'uncommon': base = 50; break;
+      case 'rare': base = 100; break;
+      case 'legendary': base = 200; break;
+      default: base = 25;
     }
+    
+    if (gameState.modifiers?.some(m => m.id === 'thrifty')) {
+      return Math.floor(base * 0.5);
+    }
+    return base;
   };
+
+  const isThrifty = gameState.modifiers?.some(m => m.id === 'thrifty');
+  const relicCost = isThrifty ? 50 : 100;
+  const removalCost = isThrifty ? Math.floor(shop.removalCost * 0.5) : shop.removalCost;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-bg-primary p-8 animate-fade-in relative">
@@ -85,7 +95,7 @@ export default function ShopScreen({
             <h3 className="text-sm uppercase tracking-widest text-text-muted font-bold border-b border-white border-opacity-10 pb-2">Sacred Relics</h3>
             <div className="flex gap-6">
               {shop.relics.map((relic, i) => {
-                const cost = 100; // Fixed relic cost for now
+                const cost = relicCost;
                 const canAfford = gameState.shards >= cost;
                 return (
                   <div key={i} className="flex items-center gap-6 glass-panel p-4 border-opacity-20 flex-1">
@@ -118,10 +128,10 @@ export default function ShopScreen({
               </div>
               <button 
                 onClick={() => setIsRemoving(true)}
-                disabled={gameState.shards < shop.removalCost}
+                disabled={gameState.shards < removalCost}
                 className="btn-secondary border-danger text-danger hover:bg-danger hover:text-white py-2 px-6"
               >
-                💎 {shop.removalCost}
+                💎 {removalCost}
               </button>
             </div>
           </div>
@@ -142,7 +152,7 @@ export default function ShopScreen({
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             {gameState.deck.map((card, i) => (
               <div key={i} className="hover:scale-105 transition-transform cursor-pointer" onClick={() => {
-                onRemoveCard(i, shop.removalCost);
+                onRemoveCard(i, removalCost);
                 setIsRemoving(false);
               }}>
                 <Card card={card} index={i} selected={false} playable={false} onClick={() => {}} />

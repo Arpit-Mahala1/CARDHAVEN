@@ -1,21 +1,45 @@
-import { useState, useCallback, useRef } from 'react';
-import { GameState, Card } from '../types';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { GameState, Card, DailyModifier } from '../types';
 import { BattleEngine } from '../utils/battleEngine';
 import { generateEnemyEncounter } from '../utils/enemyGenerator';
 import cardsData from '../data/cards.json';
 import { GAME_CONSTANTS } from '../utils/balanceData';
 
-export function useGameState() {
+export function useGameState(autoEndTurn: boolean = false) {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const engineRef = useRef<BattleEngine | null>(null);
 
+  const endTurn = useCallback(() => {
+    const engine = engineRef.current;
+    if (!engine) return;
+
+    engine.endPlayerTurn();
+    const newState = engine.getState();
+    setGameState(newState);
+
+    if (newState.phase !== 'gameover' && engine.checkBattleEnd() === 'won') {
+      engine.advanceToReward();
+      setGameState(engine.getState());
+    }
+  }, []);
+
   const startNewRun = useCallback((
     playerId: string,
-    characterClass: 'warrior' | 'mage' | 'rogue'
+    characterClass: 'warrior' | 'mage' | 'rogue',
+    seed: string = Math.random().toString(36).slice(2),
+    modifiers: DailyModifier[] = []
   ) => {
     const runId = `run-${Date.now()}`;
     const starterDeck = getStarterDeck(characterClass);
     const shuffled = shuffleArray([...starterDeck]);
+
+    let health: number = GAME_CONSTANTS.STARTING_HEALTH;
+    let maxHealth: number = GAME_CONSTANTS.STARTING_HEALTH;
+
+    if (modifiers.some(m => m.id === 'bleed_start')) {
+      maxHealth = Math.round(maxHealth * 0.8);
+      health = maxHealth;
+    }
 
     const initialState: GameState = {
       playerId,
@@ -25,8 +49,8 @@ export function useGameState() {
       deck: shuffled,
       discard: [],
       exhausted: [],
-      health: GAME_CONSTANTS.STARTING_HEALTH,
-      maxHealth: GAME_CONSTANTS.STARTING_HEALTH,
+      health,
+      maxHealth,
       block: 0,
       energy: GAME_CONSTANTS.STARTING_ENERGY,
       maxEnergy: GAME_CONSTANTS.STARTING_ENERGY,
@@ -34,19 +58,22 @@ export function useGameState() {
       shards: GAME_CONSTANTS.STARTING_SHARDS,
       statusEffects: [],
       relics: [],
-      enemies: generateEnemyEncounter(1),
+      enemies: generateEnemyEncounter(1, seed, modifiers),
       isPlayerTurn: true,
       turnsPlayed: 0,
       roomsCleared: 0,
       cardsAdded: [],
-      seed: Math.random().toString(36).slice(2),
+      seed: seed,
+      modifiers: modifiers,
       startTime: Date.now(),
       phase: 'battle',
       score: 0,
+      enemiesKilled: 0,
+      totalDamageDealt: 0,
+      bossesDefeated: [],
     };
 
     const engine = new BattleEngine(initialState);
-    // Draw opening hand
     engine.drawCards(GAME_CONSTANTS.STARTING_HAND_SIZE);
     engineRef.current = engine;
     setGameState(engine.getState());
@@ -61,29 +88,22 @@ export function useGameState() {
       const newState = engine.getState();
       setGameState(newState);
 
-      // Check if battle is won
       if (engine.checkBattleEnd() === 'won') {
         engine.advanceToReward();
         setGameState(engine.getState());
+      } else if (autoEndTurn) {
+        // Auto-end turn check: No energy and no 0-cost cards
+        const hasPlayableCards = newState.hand.some(card => card.cost <= newState.energy);
+        if (!hasPlayableCards && newState.isPlayerTurn) {
+          // Delay end turn slightly for visual feedback
+          setTimeout(() => {
+            endTurn();
+          }, 600);
+        }
       }
     }
     return success;
-  }, []);
-
-  const endTurn = useCallback(() => {
-    const engine = engineRef.current;
-    if (!engine) return;
-
-    engine.endPlayerTurn();
-    const newState = engine.getState();
-    setGameState(newState);
-
-    // Check battle end after enemy turn
-    if (newState.phase !== 'gameover' && engine.checkBattleEnd() === 'won') {
-      engine.advanceToReward();
-      setGameState(engine.getState());
-    }
-  }, []);
+  }, [autoEndTurn, endTurn]);
 
   const pickRewardCard = useCallback((card: Card) => {
     const engine = engineRef.current;
@@ -131,6 +151,52 @@ export function useGameState() {
     }
   }, []);
 
+  const applyEventChoice = useCallback((choiceIndex: number) => {
+    const engine = engineRef.current;
+    if (engine) {
+      engine.applyEventChoice(choiceIndex);
+      setGameState(engine.getState());
+    }
+  }, []);
+
+  const rest = useCallback((choice: 'heal' | 'upgrade') => {
+    const engine = engineRef.current;
+    if (engine) {
+      engine.rest(choice);
+      setGameState(engine.getState());
+    }
+  }, []);
+
+  const abandonRun = useCallback(() => {
+    localStorage.removeItem('cardhaven_run');
+    setGameState(null);
+    engineRef.current = null;
+  }, []);
+
+  // Persistence: Save
+  useEffect(() => {
+    if (gameState && gameState.phase !== 'gameover') {
+      localStorage.setItem('cardhaven_run', JSON.stringify(gameState));
+    } else if (gameState?.phase === 'gameover') {
+      localStorage.removeItem('cardhaven_run');
+    }
+  }, [gameState]);
+
+  // Persistence: Load
+  useEffect(() => {
+    const saved = localStorage.getItem('cardhaven_run');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const engine = new BattleEngine(parsed);
+        engineRef.current = engine;
+        setGameState(engine.getState());
+      } catch (e) {
+        console.error('Failed to load saved run', e);
+      }
+    }
+  }, []);
+
   return {
     gameState,
     startNewRun,
@@ -142,14 +208,14 @@ export function useGameState() {
     buyRelic,
     removeCard,
     leaveShop,
+    applyEventChoice,
+    rest,
+    abandonRun,
   };
 }
 
 function getStarterDeck(characterClass: string): Card[] {
   const allCards = (cardsData as { cards: Card[] }).cards;
-  const commons = allCards.filter(c => c.rarity === 'common');
-
-  // Give 4x Strike + 4x Defend + 2 class-specific cards
   const strike = allCards.find(c => c.id === 'strike')!;
   const defend = allCards.find(c => c.id === 'defend')!;
   const forceWave = allCards.find(c => c.id === 'force_wave')!;
@@ -158,7 +224,7 @@ function getStarterDeck(characterClass: string): Card[] {
   if (characterClass === 'mage') classBonusId = 'poison_gas';
   if (characterClass === 'rogue') classBonusId = 'pummel';
 
-  const classCard = allCards.find(c => c.id === classBonusId) ?? commons[0];
+  const classCard = allCards.find(c => c.id === classBonusId) ?? allCards.find(c => c.rarity === 'common')!;
 
   return [
     strike, strike, strike, forceWave,

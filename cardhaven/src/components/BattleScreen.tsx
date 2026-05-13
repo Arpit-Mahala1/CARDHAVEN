@@ -3,6 +3,7 @@ import { GameState } from '../types';
 import Card from './Card';
 import Enemy from './Enemy';
 import { STATUS_EFFECTS } from '../utils/balanceData';
+import { audioManager } from '../utils/audioManager';
 
 interface BattleScreenProps {
   gameState: GameState;
@@ -21,6 +22,7 @@ export default function BattleScreen({
 
   const handleCardClick = (index: number) => {
     if (!gameState.isPlayerTurn) return;
+    audioManager.playSFX('click');
     if (selectedCard === index) {
       setSelectedCard(null);
     } else {
@@ -35,6 +37,7 @@ export default function BattleScreen({
     // Play card targeting this cell
     const success = onPlayCard(selectedCard, x, y);
     if (success) {
+      audioManager.playSFX('card');
       setSelectedCard(null);
     }
   };
@@ -45,7 +48,10 @@ export default function BattleScreen({
       const card = gameState.hand[index];
       if (card.targetType === 'none') {
         const success = onPlayCard(index);
-        if (success) setSelectedCard(null);
+        if (success) {
+          audioManager.playSFX('card');
+          setSelectedCard(null);
+        }
       }
     } else {
       handleCardClick(index);
@@ -81,117 +87,117 @@ export default function BattleScreen({
   }
 
   return (
-    <div className="flex flex-col h-screen w-full relative overflow-hidden animate-fade-in">
+    <div className="flex flex-col h-screen w-full relative overflow-hidden animate-fade-in bg-black">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 bg-radial-gradient from-transparent to-black opacity-40 pointer-events-none" />
+      
       {/* Exit Button */}
       <button 
         onClick={() => {
-          if (window.confirm("Are you sure you want to exit? All progress in this run will be lost.")) {
+          if (window.confirm("Abandon this descent? All progress will be lost to the gloom.")) {
             onExit();
           }
         }}
-        className="absolute top-4 left-4 z-50 p-2 glass-panel border-opacity-20 hover:border-opacity-50 text-text-muted hover:text-danger transition-all group flex items-center gap-2"
-        title="Exit to Main Menu"
+        className="absolute top-6 left-8 z-50 p-3 glass-panel border-opacity-10 hover:border-opacity-40 text-text-muted hover:text-accent-gold transition-all group flex items-center gap-3"
+        title="Abandon Run"
       >
-        <span className="text-xl">🚪</span>
-        <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold uppercase tracking-widest">Quit Run</span>
+        <span className="text-xl">🕯️</span>
+        <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] uppercase tracking-[0.3em] font-bold">Abandon</span>
       </button>
 
-      {/* Background Particles (CSS simulated) */}
-      <div className="absolute inset-0 pointer-events-none opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] animate-shimmer" />
-
-      <div className="flex flex-1 w-full max-w-6xl mx-auto px-4 py-4 gap-8 h-full">
+      {/* Main Content Area */}
+      <div className="flex flex-1 w-full max-w-[1400px] mx-auto px-8 py-4 gap-8 overflow-hidden">
         
-        {/* Left Side: Stats & Info */}
-        <div className="flex flex-col gap-4 w-1/4 pt-8">
-          <div className="glass-panel p-6 shadow-gold flex flex-col gap-6">
+        {/* Left Side: Stats & Info (Scrollable if needed) */}
+        <div className="flex flex-col gap-4 w-72 h-full overflow-y-auto no-scrollbar py-8">
+          <div className="glass-panel p-6 flex flex-col gap-6 border-opacity-10">
             {/* Class & Floor */}
             <div className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-gold uppercase tracking-widest flex items-center gap-2">
-                Floor {gameState.floor}
-                {gameState.floor % 5 === 0 && <span className="animate-pulse">🔥</span>}
+              <span className="text-[9px] font-bold text-accent-gold uppercase tracking-[0.4em] flex items-center gap-2 opacity-60">
+                Gallery Depth {gameState.floor}
+                {gameState.floor % 5 === 0 && <span className="animate-pulse">👁️</span>}
               </span>
-              <span className="text-xl font-serif text-text-primary capitalize">
-                {gameState.characterClass}
-              </span>
+              <h2 className="text-xl font-serif text-text-primary uppercase tracking-widest">
+                {gameState.characterClass === 'warrior' ? 'The Sunderer' : gameState.characterClass === 'mage' ? 'The Archivist' : 'The Shadow'}
+              </h2>
             </div>
 
             {/* Health */}
             <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-end text-sm">
-                <span className="font-mono text-text-secondary flex items-center gap-2">
-                  <span className="text-danger">❤️</span> HP
+              <div className="flex justify-between items-end text-[9px] uppercase tracking-widest">
+                <span className="text-text-secondary flex items-center gap-2">
+                  <span className="text-accent-red">🩸</span> Vitality
                 </span>
-                <span className="font-mono font-bold">{gameState.health}/{gameState.maxHealth}</span>
+                <span className="font-mono font-bold text-text-primary">{gameState.health}/{gameState.maxHealth}</span>
               </div>
-              <div className="stat-bar-track h-4 bg-opacity-30">
-                <div className={`stat-bar-fill health ${healthPercent > 50 ? 'high' : ''}`} style={{ width: `${healthPercent}%` }} />
+              <div className="stat-bar-track h-1.5 bg-black">
+                <div className="stat-bar-fill health shadow-[0_0_10px_rgba(74,14,14,0.5)]" style={{ width: `${healthPercent}%` }} />
               </div>
             </div>
 
-            {/* Block */}
-            <div className="flex justify-between items-center bg-accent-blue bg-opacity-20 p-2 rounded border border-accent-blue border-opacity-30">
-              <span className="font-mono text-text-secondary flex items-center gap-2">
-                🛡️ Block
-              </span>
-              <span className="font-mono font-bold text-accent-blue text-lg">{gameState.block}</span>
-            </div>
-
-            {/* Shards */}
-            <div className="flex justify-between items-center bg-gold bg-opacity-10 p-2 rounded border border-gold border-opacity-30">
-              <span className="font-mono text-text-secondary flex items-center gap-2">
-                💎 Shards
-              </span>
-              <span className="font-mono font-bold text-gold text-lg">{gameState.shards}</span>
+            {/* Block & Shards */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1 p-2 bg-black bg-opacity-40 border border-white border-opacity-5 rounded-sm">
+                <span className="text-[8px] uppercase tracking-widest text-text-muted">Bulwark</span>
+                <span className="font-serif font-bold text-accent-blue text-lg">{gameState.block}</span>
+              </div>
+              <div className="flex flex-col gap-1 p-2 bg-black bg-opacity-40 border border-white border-opacity-5 rounded-sm">
+                <span className="text-[8px] uppercase tracking-widest text-text-muted">Essence</span>
+                <span className="font-serif font-bold text-accent-gold text-lg">{gameState.shards}</span>
+              </div>
             </div>
 
             {/* Energy */}
-            <div className="flex flex-col gap-2 pt-4 border-t border-white border-opacity-10">
-              <div className="flex justify-between items-end text-sm">
-                <span className="font-mono text-text-secondary flex items-center gap-2">
-                  <span className="text-gold">⚡</span> Energy
+            <div className="flex flex-col gap-2 pt-4 border-t border-white border-opacity-5">
+              <div className="flex justify-between items-end text-[9px] uppercase tracking-widest">
+                <span className="text-text-secondary flex items-center gap-2">
+                  <span className="text-accent-gold">🌑</span> Will
                 </span>
-                <span className="font-mono font-bold text-gold">{gameState.energy}/{gameState.maxEnergy}</span>
+                <span className="font-mono font-bold text-accent-gold">{gameState.energy}/{gameState.maxEnergy}</span>
               </div>
-              <div className="stat-bar-track h-4 bg-opacity-30">
-                <div className="stat-bar-fill energy shadow-gold" style={{ width: `${energyPercent}%` }} />
+              <div className="stat-bar-track h-1.5 bg-black">
+                <div className="stat-bar-fill energy shadow-[0_0_10px_rgba(197,160,89,0.3)]" style={{ width: `${energyPercent}%` }} />
               </div>
             </div>
             
             {/* End Turn */}
             <button 
-              onClick={onEndTurn}
+              onClick={() => {
+                audioManager.playSFX('click');
+                onEndTurn();
+              }}
               disabled={!gameState.isPlayerTurn}
-              className="btn-primary w-full py-4 mt-4 text-lg shadow-gold animate-pulse-gold hover:animate-none"
+              className="btn-primary w-full py-4 mt-2 text-[9px] uppercase tracking-[0.3em] group hover:tracking-[0.4em]"
             >
-              End Turn
+              Cede Turn
             </button>
           </div>
 
           {/* Status Effects & Relics */}
-          <div className="glass-panel p-4 flex flex-col gap-4">
+          <div className="glass-panel p-5 flex flex-col gap-5 border-opacity-10">
             <div className="flex flex-col gap-2">
-              <span className="text-xs text-text-muted uppercase font-bold tracking-wider">Status Effects</span>
+              <span className="text-[8px] text-text-muted uppercase font-bold tracking-[0.3em] opacity-60">Afflictions</span>
               <div className="flex gap-2 flex-wrap">
-                {gameState.statusEffects.length === 0 && <span className="text-xs text-text-secondary italic">None</span>}
+                {gameState.statusEffects.length === 0 && <span className="text-[9px] text-text-muted italic font-serif">Untouched</span>}
                 {gameState.statusEffects.map((effect, i) => {
                   const data = STATUS_EFFECTS[effect.type];
                   return (
-                    <div key={i} className="flex items-center gap-1 bg-bg-secondary px-2 py-1 rounded border border-white border-opacity-10 shadow-sm" title={data?.description.replace('{stacks}', effect.stacks.toString())}>
-                      <span>{data?.icon}</span>
-                      <span className="text-xs font-bold">{effect.stacks}</span>
+                    <div key={i} className="flex items-center gap-1.5 bg-black bg-opacity-40 px-2 py-0.5 border border-white border-opacity-5" title={data?.description.replace('{stacks}', effect.stacks.toString())}>
+                      <span className="text-xs">{data?.icon}</span>
+                      <span className="text-[9px] font-bold text-text-primary">{effect.stacks}</span>
                     </div>
                   );
                 })}
               </div>
             </div>
             
-            <div className="flex flex-col gap-2 border-t border-white border-opacity-10 pt-4">
-              <span className="text-xs text-text-muted uppercase font-bold tracking-wider">Relics</span>
+            <div className="flex flex-col gap-2 border-t border-white border-opacity-5 pt-4">
+              <span className="text-[8px] text-text-muted uppercase font-bold tracking-[0.3em] opacity-60">Curios</span>
               <div className="flex gap-2 flex-wrap">
-                {gameState.relics.length === 0 && <span className="text-xs text-text-secondary italic">None</span>}
+                {gameState.relics.length === 0 && <span className="text-[9px] text-text-muted italic font-serif">Barren</span>}
                 {gameState.relics.map((relic, i) => (
-                  <div key={i} className="w-8 h-8 bg-gold bg-opacity-20 rounded border border-gold flex items-center justify-center text-sm shadow-md hover:bg-opacity-30 transition-colors cursor-help" title={relic.description}>
-                    🏺
+                  <div key={i} className="w-8 h-8 bg-black bg-opacity-40 border border-accent-gold border-opacity-10 flex items-center justify-center text-base hover:border-opacity-40 transition-colors cursor-help shadow-inner" title={relic.description}>
+                    💀
                   </div>
                 ))}
               </div>
@@ -200,13 +206,12 @@ export default function BattleScreen({
         </div>
 
         {/* Center: The Grid */}
-        <div className="flex-1 flex justify-center items-center py-4 z-10 h-[60vh] max-h-[600px] mt-4">
-          <div className="grid grid-cols-4 grid-rows-5 gap-3 w-full max-w-2xl h-full p-6 glass-panel-dark shadow-xl relative">
-            
+        <div className="flex-1 flex justify-center items-start pt-8 z-10">
+          <div className="grid grid-cols-4 grid-rows-5 gap-3 w-full max-w-2xl aspect-[4/5] p-6 glass-panel-dark shadow-2xl relative border-opacity-5">
             {/* Defensive Line Indicator */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-danger bg-opacity-50 shadow-[0_0_15px_rgba(199,62,29,0.8)] z-0 rounded-b-xl" />
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-[10px] text-danger font-mono font-bold tracking-widest opacity-50 z-0">
-              DEFENSE LINE
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-accent-red bg-opacity-20 shadow-[0_-10px_30px_rgba(74,14,14,0.4)] z-0" />
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-[8px] text-accent-red font-serif font-bold tracking-[0.6em] opacity-40 z-0 whitespace-nowrap">
+              THE THRESHOLD
             </div>
 
             {gridCells}
@@ -214,31 +219,31 @@ export default function BattleScreen({
         </div>
       </div>
 
-      {/* Bottom: Hand & Deck Info */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 w-full flex items-end justify-center pb-8 z-20 pointer-events-none">
+      {/* Bottom: Hand & Deck Info (Non-absolute for layout stability) */}
+      <div className="h-64 w-full flex items-end justify-center pb-8 z-20 relative bg-gradient-to-t from-black to-transparent">
         
         {/* Draw Pile */}
-        <div className="absolute left-8 bottom-8 flex flex-col items-center gap-2 pointer-events-auto">
-          <div className="w-16 h-24 glass-panel-dark flex items-center justify-center border-opacity-20 shadow-md">
-            <span className="text-2xl opacity-50">🎴</span>
+        <div className="absolute left-12 bottom-8 flex flex-col items-center gap-2">
+          <div className="w-14 h-20 glass-panel-dark flex items-center justify-center border-opacity-20 shadow-md">
+            <span className="text-xl opacity-50">🎴</span>
           </div>
-          <span className="text-xs font-mono text-text-secondary">{gameState.deck.length} Deck</span>
+          <span className="text-[10px] font-mono text-text-secondary uppercase tracking-widest">{gameState.deck.length} Deck</span>
         </div>
 
         {/* Hand */}
-        <div className="flex justify-center gap-[-20px] max-w-3xl animate-slide-up relative z-30 pointer-events-auto" style={{ perspective: '1000px' }}>
+        <div className="flex justify-center gap-[-30px] max-w-4xl relative z-30 mb-2" style={{ perspective: '1000px' }}>
           {gameState.hand.map((card, i) => {
             const offset = i - (gameState.hand.length - 1) / 2;
             const rotation = offset * 4;
-            const translateY = Math.abs(offset) * 5;
+            const translateY = Math.abs(offset) * 8;
             
             return (
               <div 
                 key={`${card.id}-${i}`} 
-                className="transition-transform duration-300 -ml-4 first:ml-0"
+                className="transition-transform duration-300 -ml-12 first:ml-0 cursor-pointer"
                 style={{ 
-                  transform: selectedCard !== i ? `rotate(${rotation}deg) translateY(${translateY}px)` : 'none',
-                  zIndex: selectedCard === i ? 50 : i
+                  transform: selectedCard !== i ? `rotate(${rotation}deg) translateY(${translateY}px)` : 'translateY(-40px) scale(1.1)',
+                  zIndex: selectedCard === i ? 100 : i
                 }}
               >
                 <Card
@@ -254,11 +259,11 @@ export default function BattleScreen({
         </div>
 
         {/* Discard */}
-        <div className="absolute right-8 bottom-8 flex flex-col items-center gap-2 pointer-events-auto">
-          <div className="w-16 h-24 glass-panel-dark flex items-center justify-center border-opacity-20 opacity-70">
-            <span className="text-2xl opacity-30">🗑️</span>
+        <div className="absolute right-12 bottom-8 flex flex-col items-center gap-2">
+          <div className="w-14 h-20 glass-panel-dark flex items-center justify-center border-opacity-20 opacity-70">
+            <span className="text-xl opacity-30">🗑️</span>
           </div>
-          <span className="text-xs font-mono text-text-secondary">{gameState.discard.length} Discard</span>
+          <span className="text-[10px] font-mono text-text-secondary uppercase tracking-widest">{gameState.discard.length} Discard</span>
         </div>
       </div>
     </div>

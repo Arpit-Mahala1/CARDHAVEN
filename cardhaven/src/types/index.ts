@@ -8,9 +8,13 @@ export interface Card {
   cost: number;
   cardType: 'attack' | 'defense' | 'draw' | 'utility' | 'power';
   rarity: 'common' | 'uncommon' | 'rare' | 'legendary';
-  targetType?: 'cell' | 'row' | 'column' | 'none';
+  targetType?: 'cell' | 'row' | 'column' | 'none' | 'all';
   effect: CardEffect;
   upgrades?: string[];
+  /** If true, card is removed from deck after playing (exhaust) */
+  exhaust?: boolean;
+  /** Lore flavor text */
+  lore?: string;
 }
 
 export interface CardEffect {
@@ -23,6 +27,12 @@ export interface CardEffect {
   hits?: number;
   knockback?: number;
   area?: '2x2' | 'cross' | 'row' | 'column';
+  /** Damage to self (risk/reward cards) */
+  selfDamage?: number;
+  /** Energy gain */
+  energyGain?: number;
+  /** Percentage of current health as damage */
+  healthPercentDamage?: number;
 }
 
 export interface StatusEffectApplication {
@@ -30,7 +40,19 @@ export interface StatusEffectApplication {
   stacks: number;
 }
 
-export type StatusEffectType = 'poison' | 'vulnerable' | 'weak' | 'frail' | 'strength' | 'dexterity';
+export type StatusEffectType =
+  | 'poison'
+  | 'vulnerable'
+  | 'weak'
+  | 'frail'
+  | 'strength'
+  | 'dexterity'
+  | 'bleed'
+  | 'stun'
+  | 'regen'
+  | 'thorns'
+  | 'ritual'       // Gain strength each turn
+  | 'doom';        // Take increasing damage each turn
 
 export interface StatusEffect {
   type: StatusEffectType;
@@ -54,6 +76,9 @@ export interface Enemy {
   actions: EnemyAction[];
   statusEffects: StatusEffect[];
   currentActionIndex: number;
+  isBoss?: boolean;
+  /** For enemies that summon minions */
+  summonId?: string;
 }
 
 export interface EnemyTemplate {
@@ -62,7 +87,10 @@ export interface EnemyTemplate {
   baseHealth: number;
   actions: EnemyAction[];
   scalingFactor: number;
-  movementPattern?: 'straight' | 'weaver' | 'healer';
+  movementPattern?: 'straight' | 'weaver' | 'healer' | 'lurker' | 'charger';
+  isBoss?: boolean;
+  /** Flavor text shown in battle */
+  lore?: string;
 }
 
 export interface EnemyAction {
@@ -72,10 +100,14 @@ export interface EnemyAction {
   block?: number;
   statusEffects?: StatusEffectApplication[];
   priority?: number;
+  /** Heal amount (for healer-type enemies) */
+  heal?: number;
+  /** Summon an enemy by template ID */
+  summon?: string;
 }
 
 export interface Intent {
-  type: 'attack' | 'defend' | 'buff' | 'debuff' | 'heal';
+  type: 'attack' | 'defend' | 'buff' | 'debuff' | 'heal' | 'summon';
   amount: number;
   icon?: string;
 }
@@ -90,6 +122,35 @@ export interface Relic {
   rarity: 'common' | 'uncommon' | 'rare' | 'legendary';
   passive: boolean;
   activationCondition?: string;
+  /** Icon emoji for display */
+  icon?: string;
+}
+
+/**
+ * EVENT SYSTEM
+ */
+export interface GameEvent {
+  id: string;
+  title: string;
+  description: string;
+  choices: EventChoice[];
+  icon: string;
+}
+
+export interface EventChoice {
+  text: string;
+  effect: EventEffect;
+  requirement?: string;
+}
+
+export interface EventEffect {
+  health?: number;
+  maxHealth?: number;
+  shards?: number;
+  addCard?: string;
+  removeRandomCard?: boolean;
+  addRelic?: string;
+  addStatusEffect?: StatusEffectApplication;
 }
 
 /**
@@ -125,9 +186,33 @@ export interface GameState {
   seed: string;
   startTime: number;
 
-  phase: 'battle' | 'reward' | 'shop' | 'gameover' | 'victory';
+  phase: 'battle' | 'reward' | 'shop' | 'gameover' | 'victory' | 'event' | 'rest';
   score: number;
   shopState?: ShopState;
+  
+  /** Current event for event rooms */
+  currentEvent?: GameEvent;
+  
+  /** Whether this is a daily run */
+  isDailyRun?: boolean;
+  
+  /** Boss defeated flags */
+  bossesDefeated?: string[];
+  
+  /** Total enemies killed this run */
+  enemiesKilled: number;
+  
+  /** Damage dealt this run */
+  totalDamageDealt: number;
+
+  /** Active daily modifiers */
+  modifiers?: DailyModifier[];
+}
+
+export interface DailyModifier {
+  id: string;
+  name: string;
+  description: string;
 }
 
 export interface ShopState {
@@ -150,6 +235,7 @@ export interface GameRun {
   seed: string;
   decklist: string[];
   relicsFound: string[];
+  isDailyRun?: boolean;
 }
 
 export interface LeaderboardEntry {
@@ -160,12 +246,37 @@ export interface LeaderboardEntry {
   characterClass: string;
   timestamp: number;
   playerId: string;
+  isDailyRun?: boolean;
+  seasonId?: string;
 }
 
 /**
  * UI STATE
  */
-export type Screen = 'menu' | 'game' | 'leaderboard' | 'profile';
+export type Screen = 'menu' | 'game' | 'leaderboard' | 'profile' | 'settings' | 'daily';
+
+/**
+ * SETTINGS
+ */
+export interface GameSettings {
+  masterVolume: number;
+  musicVolume: number;
+  sfxVolume: number;
+  reducedMotion: boolean;
+  showDamageNumbers: boolean;
+  autoEndTurn: boolean;
+}
+
+/**
+ * TUTORIAL
+ */
+export interface TutorialStep {
+  id: string;
+  title: string;
+  description: string;
+  highlightSelector?: string;
+  position: 'center' | 'top' | 'bottom' | 'left' | 'right';
+}
 
 /**
  * USER PROFILE
@@ -179,4 +290,24 @@ export interface UserProfile {
   totalWins: number;
   bestScore: number;
   playTime: number;
+  enemiesKilled: number;
+  cardsPlayed: number;
+  dailyRunsCompleted: number;
+}
+
+/**
+ * DAILY RUN
+ */
+export interface DailyRunInfo {
+  seed: string;
+  date: string;
+  characterClass: 'warrior' | 'mage' | 'rogue';
+  modifiers: DailyModifier[];
+}
+
+export interface DailyModifier {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
 }

@@ -1,18 +1,35 @@
 import { 
-  Card, Enemy, GameState, Intent, 
+  Card, Enemy, GameState, GameEvent, Intent, 
   StatusEffectType, Relic, ShopState, StatusEffect
 } from '../types';
 import cardData from '../data/cards.json';
 import enemyData from '../data/enemies.json';
 import relicData from '../data/relics.json';
-import { GAME_CONSTANTS, STATUS_EFFECTS } from './balanceData';
-import { generateEnemyEncounter } from './enemyGenerator';
+import { GAME_CONSTANTS, STATUS_EFFECTS, EVENTS } from './balanceData';
+import { generateEnemyEncounter, generateBossEncounter } from './enemyGenerator';
 
 export class BattleEngine {
   private state: GameState;
+  private rngSeed: number = 1;
 
   constructor(initialState: GameState) {
     this.state = { ...initialState };
+    this.initRNG(this.state.seed);
+  }
+
+  private initRNG(seedStr: string = '') {
+    const str = seedStr || Math.random().toString();
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    this.rngSeed = Math.abs(hash) || 1;
+  }
+
+  private nextRandom(): number {
+    this.rngSeed = (this.rngSeed * 16807) % 2147483647;
+    return (this.rngSeed - 1) / 2147483646;
   }
 
   getState(): GameState {
@@ -29,7 +46,9 @@ export class BattleEngine {
 
     // Determine targets based on targetType
     let targets: Enemy[] = [];
-    if ((card.targetType === 'cell' || !card.targetType) && targetX !== undefined && targetY !== undefined) {
+    if (card.targetType === 'all') {
+      targets = this.state.enemies.filter(e => e.health > 0);
+    } else if ((card.targetType === 'cell' || !card.targetType) && targetX !== undefined && targetY !== undefined) {
       if (card.effect.area === '2x2') {
         targets = this.state.enemies.filter(e => 
           e.boardX >= targetX && e.boardX <= targetX + 1 && 
@@ -67,17 +86,33 @@ export class BattleEngine {
     // Apply effect
     this.applyCardEffect(card, targets);
 
-    // Move to discard
-    this.state = {
-      ...this.state,
-      discard: [...this.state.discard, card],
-    };
+    // Move to discard or exhaust
+    if (card.exhaust) {
+      this.state = {
+        ...this.state,
+        exhausted: [...this.state.exhausted, card],
+      };
+    } else {
+      this.state = {
+        ...this.state,
+        discard: [...this.state.discard, card],
+      };
+    }
 
     return true;
   }
 
   private applyCardEffect(card: Card, targets: Enemy[]): void {
     const effect = card.effect;
+
+    // 0. Special: "Last Stand" — damage = missing HP
+    let effectiveDamage = effect.damage ?? 0;
+    if (card.id === 'last_stand') {
+      effectiveDamage = this.state.maxHealth - this.state.health;
+    }
+
+    // 0b. Special: healthPercentDamage
+    // Applied per-target below
 
     // 1. Calculate Damage
     const hits = effect.hits ?? 1;
@@ -87,13 +122,19 @@ export class BattleEngine {
     const strengthBonus = strengthEffect ? strengthEffect.stacks * 2 : 0;
 
     // Damage
-    if (effect.damage && targets.length > 0) {
+    if ((effectiveDamage > 0 || effect.healthPercentDamage) && targets.length > 0) {
       // Apply relic bonuses
       let bonusFromRelics = 0;
       if (this.state.relics.some(r => r.id === 'molten_egg')) bonusFromRelics += 1;
       if (this.state.relics.some(r => r.id === 'sword_of_strength')) bonusFromRelics += 2;
 
-      let baseDamage = effect.damage + strengthBonus + bonusFromRelics;
+      let baseDamage = effectiveDamage + strengthBonus + bonusFromRelics;
+      if (card.cost === 0 && this.state.relics.some(r => r.id === 'inkwell')) baseDamage += 3;
+
+      // glass_cannon modifier (Player deals +50% damage)
+      if (this.state.modifiers?.some(m => m.id === 'glass_cannon')) {
+        baseDamage = Math.floor(baseDamage * 1.5);
+      }
 
       // Weak reduces player damage
       const weakEffect = this.getPlayerStatusEffect('weak');
@@ -106,6 +147,11 @@ export class BattleEngine {
           if (!currentTarget || currentTarget.health <= 0) continue;
 
           let damage = baseDamage;
+
+          // healthPercentDamage override
+          if (effect.healthPercentDamage) {
+            damage = Math.floor(currentTarget.health * (effect.healthPercentDamage / 100));
+          }
 
           // Vulnerable on target amplifies damage
           const vulnEffect = currentTarget.statusEffects.find(s => s.type === 'vulnerable');
@@ -177,7 +223,23 @@ export class BattleEngine {
       };
     }
 
-    // 5. Status effects (Applied AFTER damage)
+    // 5. Self Damage (risk/reward cards)
+    if (effect.selfDamage) {
+      this.state = {
+        ...this.state,
+        health: Math.max(1, this.state.health - effect.selfDamage),
+      };
+    }
+
+    // 6. Energy Gain
+    if (effect.energyGain) {
+      this.state = {
+        ...this.state,
+        energy: this.state.energy + effect.energyGain,
+      };
+    }
+
+    // 7. Status effects (Applied AFTER damage)
     if (effect.statusEffects) {
       effect.statusEffects.forEach(se => {
         if (effect.applyToSelf) {
@@ -207,9 +269,26 @@ export class BattleEngine {
     // Apply player poison
     this.applyPlayerPoison();
 
+    // Apply player doom
+    this.applyPlayerDoom();
+
     // 1. Enemies perform their stationary actions (buffs, blocks)
     this.state.enemies.forEach(enemy => {
-      if (enemy.health > 0) this.executeEnemyTurn(enemy);
+      if (enemy.health > 0) {
+        // Stun check: stunned enemies skip their turn
+        const stunEffect = enemy.statusEffects.find(s => s.type === 'stun');
+        if (stunEffect) {
+          // Remove stun, skip action
+          this.state = {
+            ...this.state,
+            enemies: this.state.enemies.map(e =>
+              e.id === enemy.id ? { ...e, statusEffects: e.statusEffects.filter(s => s.type !== 'stun') } : e
+            ),
+          };
+        } else {
+          this.executeEnemyTurn(enemy);
+        }
+      }
     });
 
     // 2. Enemies move down the grid
@@ -296,6 +375,11 @@ export class BattleEngine {
         const playerVuln = this.state.statusEffects.find(s => s.type === 'vulnerable');
         if (playerVuln) atkDamage = Math.floor(atkDamage * 1.5);
 
+        // glass_cannon modifier (Player takes +50% damage)
+        if (this.state.modifiers?.some(m => m.id === 'glass_cannon')) {
+          atkDamage = Math.floor(atkDamage * 1.5);
+        }
+
         damageToPlayer += atkDamage;
         return null; // Remove enemy
       }
@@ -331,7 +415,7 @@ export class BattleEngine {
     const spawnCount = Math.min(this.state.floor >= 5 ? 2 : 1, freeColumns.length);
     const selectedColumns = this.shuffle(freeColumns).slice(0, spawnCount);
 
-    const newEnemies = generateEnemyEncounter(this.state.floor).slice(0, spawnCount);
+    const newEnemies = generateEnemyEncounter(this.state.floor, this.state.seed, this.state.modifiers).slice(0, spawnCount);
     
     newEnemies.forEach((enemy, i) => {
       enemy.boardX = selectedColumns[i];
@@ -358,9 +442,23 @@ export class BattleEngine {
       this.state = { ...this.state, energy: this.state.energy + 1 };
     }
 
+    // Apply relic: blood_chalice
+    if (this.state.relics.some(r => r.id === 'blood_chalice')) {
+      this.state = { ...this.state, energy: this.state.energy + 1, health: Math.max(1, this.state.health - 3) };
+    }
+
     // Apply relic: philosophers_stone (start of turn strength)
     if (this.state.relics.some(r => r.id === 'philosophers_stone')) {
       this.addPlayerStatusEffect('strength', 1);
+    }
+
+    // Apply player regen
+    this.applyPlayerRegen();
+
+    // Apply ritual (gain strength each turn)
+    const ritualEffect = this.getPlayerStatusEffect('ritual');
+    if (ritualEffect) {
+      this.addPlayerStatusEffect('strength', ritualEffect.stacks);
     }
 
     // Reset enemy block
@@ -377,7 +475,10 @@ export class BattleEngine {
     this.updateEnemyIntents();
 
     // Draw hand
-    this.drawCards(GAME_CONSTANTS.STARTING_HAND_SIZE);
+    let drawCount: number = GAME_CONSTANTS.STARTING_HAND_SIZE;
+    if (this.state.relics.some(r => r.id === 'ancient_tome')) drawCount += 1;
+    if (this.state.relics.some(r => r.id === 'cursed_eye')) drawCount += 1;
+    this.drawCards(drawCount);
   }
 
   // ─── Drawing ─────────────────────────────────────────────────
@@ -419,12 +520,38 @@ export class BattleEngine {
     }
   }
 
+  private applyPlayerRegen(): void {
+    const regen = this.getPlayerStatusEffect('regen');
+    if (regen && regen.stacks > 0) {
+      this.state = {
+        ...this.state,
+        health: Math.min(this.state.health + regen.stacks, this.state.maxHealth),
+        statusEffects: this.state.statusEffects.map(se =>
+          se.type === 'regen' ? { ...se, stacks: Math.max(0, se.stacks - 1) } : se
+        ),
+      };
+    }
+  }
+
+  private applyPlayerDoom(): void {
+    const doom = this.getPlayerStatusEffect('doom');
+    if (doom && doom.stacks > 0) {
+      this.state = {
+        ...this.state,
+        health: Math.max(0, this.state.health - doom.stacks),
+        statusEffects: this.state.statusEffects.map(se =>
+          se.type === 'doom' ? { ...se, stacks: se.stacks + 1 } : se
+        ),
+      };
+    }
+  }
+
   private decayPlayerStatusEffects(): void {
     this.state = {
       ...this.state,
       statusEffects: this.state.statusEffects
         .map(se => {
-          if (['weak', 'vulnerable', 'frail'].includes(se.type)) {
+          if (['weak', 'vulnerable', 'frail', 'bleed', 'thorns'].includes(se.type)) {
             return { ...se, stacks: se.stacks - 1 };
           }
           return se;
@@ -560,6 +687,47 @@ export class BattleEngine {
       return;
     }
 
+    // Boss floor
+    if (nextFloor === GAME_CONSTANTS.BOSS_FLOOR) {
+      const bossEnemies = generateBossEncounter(nextFloor);
+      this.state = {
+        ...this.state,
+        floor: nextFloor,
+        phase: 'battle',
+        enemies: bossEnemies,
+        block: 0,
+        energy: this.state.maxEnergy,
+        hand: [],
+      };
+      this.drawCards(GAME_CONSTANTS.STARTING_HAND_SIZE);
+      return;
+    }
+
+    // Event rooms every 3rd floor (3, 6, 9, etc.) but not boss floor
+    if (nextFloor % 3 === 0 && nextFloor !== GAME_CONSTANTS.BOSS_FLOOR) {
+      const randomEvent = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+      this.state = {
+        ...this.state,
+        floor: nextFloor,
+        phase: 'event',
+        currentEvent: { ...randomEvent, choices: [...randomEvent.choices] } as any,
+        hand: [],
+      };
+      return;
+    }
+
+    // Rest rooms every 5th floor
+    if (nextFloor % 5 === 0 && nextFloor !== GAME_CONSTANTS.BOSS_FLOOR) {
+      this.state = {
+        ...this.state,
+        floor: nextFloor,
+        phase: 'rest',
+        hand: [],
+      };
+      return;
+    }
+
+    // Shop every even floor (but not event/rest/boss)
     if (nextFloor % 2 === 0) {
       this.state = {
         ...this.state,
@@ -663,6 +831,72 @@ export class BattleEngine {
       shopState: undefined
     };
     this.drawCards(GAME_CONSTANTS.STARTING_HAND_SIZE);
+  }
+
+  // ─── Event System ────────────────────────────────────────────
+  applyEventChoice(choiceIndex: number): void {
+    const event = this.state.currentEvent;
+    if (!event) return;
+
+    const choice = event.choices[choiceIndex];
+    if (!choice) return;
+
+    const eff = choice.effect;
+
+    if (eff.health) {
+      if (eff.health === 999) {
+        this.state = { ...this.state, health: this.state.maxHealth };
+      } else {
+        this.state = {
+          ...this.state,
+          health: Math.max(1, Math.min(this.state.health + eff.health, this.state.maxHealth)),
+        };
+      }
+    }
+    if (eff.maxHealth) {
+      this.state = {
+        ...this.state,
+        maxHealth: this.state.maxHealth + eff.maxHealth,
+        health: eff.maxHealth > 0 ? this.state.health + eff.maxHealth : this.state.health,
+      };
+    }
+    if (eff.shards) {
+      this.state = { ...this.state, shards: Math.max(0, this.state.shards + eff.shards) };
+    }
+    if (eff.addStatusEffect) {
+      this.addPlayerStatusEffect(eff.addStatusEffect.type, eff.addStatusEffect.stacks);
+    }
+    if (eff.removeRandomCard && this.state.deck.length > 0) {
+      const idx = Math.floor(Math.random() * this.state.deck.length);
+      const newDeck = [...this.state.deck];
+      newDeck.splice(idx, 1);
+      this.state = { ...this.state, deck: newDeck };
+    }
+
+    // After event, advance to next battle
+    this.state = { ...this.state, currentEvent: undefined };
+    this.advanceToNextFloor();
+  }
+
+  // ─── Rest System ─────────────────────────────────────────────
+  rest(choice: 'heal' | 'upgrade'): void {
+    if (choice === 'heal') {
+      const healAmount = Math.floor(this.state.maxHealth * GAME_CONSTANTS.REST_HEAL_PERCENT);
+      this.state = {
+        ...this.state,
+        health: Math.min(this.state.health + healAmount, this.state.maxHealth),
+      };
+    }
+    // upgrade: could upgrade a random card — for now just heal less
+    if (choice === 'upgrade') {
+      this.state = {
+        ...this.state,
+        health: Math.min(this.state.health + 5, this.state.maxHealth),
+        maxEnergy: this.state.maxEnergy, // Could add energy upgrade in future
+      };
+      this.addPlayerStatusEffect('strength', 1);
+    }
+    this.advanceToNextFloor();
   }
 }
 

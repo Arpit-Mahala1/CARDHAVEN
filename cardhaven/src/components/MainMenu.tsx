@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+import { DailyModifier } from '../types';
+import { getDailyRunData } from '../utils/dailyRun';
 
 interface MainMenuProps {
   user: any;
-  onStartGame: (characterClass: 'warrior' | 'mage' | 'rogue') => void;
+  onStartGame: (characterClass: 'warrior' | 'mage' | 'rogue', seed?: string, modifiers?: DailyModifier[]) => void;
+  onResumeRun: () => void;
   onLeaderboard: () => void;
+  onSettings: () => void;
   onLoginClick?: () => void;
   onLogoutClick?: () => void;
 }
@@ -11,107 +15,136 @@ interface MainMenuProps {
 export default function MainMenu({
   user,
   onStartGame,
+  onResumeRun,
   onLeaderboard,
+  onSettings,
   onLoginClick,
   onLogoutClick
 }: MainMenuProps) {
   const [selectedClass, setSelectedClass] = useState<'warrior' | 'mage' | 'rogue'>('warrior');
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 relative overflow-hidden animate-fade-in">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 relative overflow-hidden animate-fade-in bg-black">
       
-      {/* Background Particles (CSS simulated) */}
-      <div className="absolute inset-0 pointer-events-none opacity-40 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] animate-float" />
-
       {/* Auth Status Bar */}
-      <div className="absolute top-4 right-6 flex items-center gap-4 z-20">
+      <div className="absolute top-6 right-8 flex items-center gap-6 z-20">
         {user ? (
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gold font-mono">{user.displayName || user.email || 'Guest Player'}</span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-accent-gold font-mono tracking-widest">{user.displayName || user.email || 'The Unnamed Soul'}</span>
             {onLogoutClick && (
-              <button onClick={onLogoutClick} className="text-xs text-text-secondary hover:text-white transition-colors">
-                Disconnect
+              <button onClick={onLogoutClick} className="text-[10px] uppercase tracking-widest text-text-muted hover:text-accent-gold transition-colors">
+                Depart
               </button>
             )}
           </div>
         ) : (
           onLoginClick && (
-            <button onClick={onLoginClick} className="btn-secondary text-sm py-1.5 px-4">
-              Sign In
+            <button onClick={onLoginClick} className="btn-secondary text-[10px] uppercase tracking-widest py-2 px-6">
+              Enter Covenant
             </button>
           )
         )}
       </div>
-
+      
       {/* Hero Title */}
-      <div className="text-center mb-12 z-10 relative">
-        <h1 className="text-6xl md:text-8xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-b from-gold-light to-[#8a7223] drop-shadow-[0_0_20px_rgba(212,175,55,0.4)] tracking-wide">
+      <div className="text-center mb-16 z-10 relative">
+        <h1 className="text-6xl md:text-8xl font-serif font-bold text-text-primary tracking-[0.2em] opacity-90 drop-shadow-[0_10px_20px_rgba(0,0,0,1)]">
           CARDHAVEN
         </h1>
-        <p className="mt-4 text-xl text-text-secondary italic font-serif">
-          Enter the Haven. Build your legend.
+        <div className="h-px w-24 bg-accent-gold mx-auto mt-4 opacity-30" />
+        <p className="mt-6 text-sm md:text-base text-text-secondary uppercase tracking-[0.4em] font-serif opacity-70">
+          The Gloom-bound Gallery
         </p>
       </div>
 
       {/* Class Selection */}
-      <div className="z-10 flex flex-col items-center w-full max-w-4xl">
-        <h3 className="text-sm uppercase tracking-[0.2em] text-text-muted mb-6 font-bold">Select Your Champion</h3>
+      <div className="z-10 flex flex-col items-center w-full max-w-5xl">
+        <h3 className="text-[10px] uppercase tracking-[0.5em] text-text-muted mb-10 font-bold opacity-60">Choose Your Vessel</h3>
         
-        <div className="flex justify-center gap-6 mb-12 flex-wrap">
+        <div className="flex justify-center gap-8 mb-16 flex-wrap">
           {/* Warrior */}
           <div 
             onClick={() => setSelectedClass('warrior')}
-            className={`cursor-pointer transition-all duration-300 w-48 h-64 rounded-xl glass-panel flex flex-col items-center justify-center gap-4 border-2 
-              ${selectedClass === 'warrior' ? 'border-gold shadow-gold scale-105 -translate-y-4' : 'border-white border-opacity-10 hover:border-opacity-30 hover:-translate-y-2'}`}
+            className={`cursor-pointer transition-all duration-500 w-52 h-72 rounded-sm glass-panel flex flex-col items-center justify-center gap-6 border 
+              ${selectedClass === 'warrior' ? 'border-accent-gold shadow-gold-lg scale-105 -translate-y-4' : 'border-white border-opacity-5 hover:border-opacity-20 hover:-translate-y-2'}`}
           >
-            <span className="text-5xl filter drop-shadow-[0_0_10px_rgba(199,62,29,0.5)]">⚔️</span>
-            <div className="text-center">
-              <h3 className="font-serif font-bold text-xl text-danger">Warrior</h3>
-              <p className="text-xs text-text-secondary mt-2 px-4">High health, powerful strikes, strong blocking.</p>
+            <span className="text-5xl opacity-80 filter grayscale-[0.2]">🩸</span>
+            <div className="text-center px-4">
+              <h3 className="font-serif font-bold text-xl text-text-primary tracking-widest uppercase">The Sunderer</h3>
+              <div className="h-px w-8 bg-accent-red mx-auto my-3 opacity-40" />
+              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">A brute forged in blood. Endures the coming dark with iron and resolve.</p>
             </div>
           </div>
 
           {/* Mage */}
           <div 
             onClick={() => setSelectedClass('mage')}
-            className={`cursor-pointer transition-all duration-300 w-48 h-64 rounded-xl glass-panel flex flex-col items-center justify-center gap-4 border-2 
-              ${selectedClass === 'mage' ? 'border-gold shadow-gold scale-105 -translate-y-4' : 'border-white border-opacity-10 hover:border-opacity-30 hover:-translate-y-2'}`}
+            className={`cursor-pointer transition-all duration-500 w-52 h-72 rounded-sm glass-panel flex flex-col items-center justify-center gap-6 border 
+              ${selectedClass === 'mage' ? 'border-accent-gold shadow-gold-lg scale-105 -translate-y-4' : 'border-white border-opacity-5 hover:border-opacity-20 hover:-translate-y-2'}`}
           >
-            <span className="text-5xl filter drop-shadow-[0_0_10px_rgba(155,89,182,0.5)]">✨</span>
-            <div className="text-center">
-              <h3 className="font-serif font-bold text-xl text-accent-purple">Mage</h3>
-              <p className="text-xs text-text-secondary mt-2 px-4">Card draw, status effects, and explosive spells.</p>
+            <span className="text-5xl opacity-80 filter grayscale-[0.2]">👁️</span>
+            <div className="text-center px-4">
+              <h3 className="font-serif font-bold text-xl text-text-primary tracking-widest uppercase">The Archivist</h3>
+              <div className="h-px w-8 bg-accent-purple mx-auto my-3 opacity-40" />
+              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">Seeks truths that bleed. Channels the void to rewrite the tapestry of fate.</p>
             </div>
           </div>
 
           {/* Rogue */}
           <div 
             onClick={() => setSelectedClass('rogue')}
-            className={`cursor-pointer transition-all duration-300 w-48 h-64 rounded-xl glass-panel flex flex-col items-center justify-center gap-4 border-2 
-              ${selectedClass === 'rogue' ? 'border-gold shadow-gold scale-105 -translate-y-4' : 'border-white border-opacity-10 hover:border-opacity-30 hover:-translate-y-2'}`}
+            className={`cursor-pointer transition-all duration-500 w-52 h-72 rounded-sm glass-panel flex flex-col items-center justify-center gap-6 border 
+              ${selectedClass === 'rogue' ? 'border-accent-gold shadow-gold-lg scale-105 -translate-y-4' : 'border-white border-opacity-5 hover:border-opacity-20 hover:-translate-y-2'}`}
           >
-            <span className="text-5xl filter drop-shadow-[0_0_10px_rgba(107,157,122,0.5)]">🗡️</span>
-            <div className="text-center">
-              <h3 className="font-serif font-bold text-xl text-accent-green">Rogue</h3>
-              <p className="text-xs text-text-secondary mt-2 px-4">Multi-hits, poison, and tactical maneuvers.</p>
+            <span className="text-5xl opacity-80 filter grayscale-[0.2]">🎭</span>
+            <div className="text-center px-4">
+              <h3 className="font-serif font-bold text-xl text-text-primary tracking-widest uppercase">The Shadow</h3>
+              <div className="h-px w-8 bg-accent-blue mx-auto my-3 opacity-40" />
+              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">A whisper in the halls. Deals in venom and the silence between heartbeats.</p>
             </div>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+        <div className="flex flex-col items-center gap-6 w-full max-w-xs">
+          {localStorage.getItem('cardhaven_run') && (
+            <button 
+              onClick={onResumeRun}
+              className="w-full bg-accent-gold text-black text-xs uppercase tracking-[0.3em] py-5 shadow-gold hover:tracking-[0.4em] transition-all mb-4"
+            >
+              Continue Descent
+            </button>
+          )}
+
           <button 
             onClick={() => onStartGame(selectedClass)}
-            className="btn-primary w-full text-lg py-4 shadow-gold animate-pulse-gold hover:animate-none"
+            className="btn-primary w-full text-xs uppercase tracking-[0.3em] py-5 shadow-gold hover:tracking-[0.4em] transition-all"
           >
-            Begin Run
+            New Threshold
+          </button>
+
+          <button 
+            onClick={() => {
+              const daily = getDailyRunData();
+              onStartGame(selectedClass, daily.seed, daily.modifiers);
+            }}
+            className="w-full glass-panel border-accent-gold border-opacity-30 text-[10px] uppercase tracking-[0.3em] py-4 hover:bg-accent-gold hover:text-black transition-all"
+          >
+            Daily Descent
           </button>
           
           <button 
             onClick={onLeaderboard}
-            className="btn-secondary w-full"
+            className="text-[10px] uppercase tracking-[0.3em] text-text-muted hover:text-accent-gold transition-colors"
           >
-            Hall of Legends
+            Tomb of Legends
+          </button>
+          
+          <button 
+            onClick={onSettings}
+            className="text-[10px] uppercase tracking-[0.3em] text-text-muted hover:text-accent-gold transition-colors"
+          >
+            ⚙ Inscriptions
           </button>
         </div>
       </div>
