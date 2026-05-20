@@ -1,155 +1,76 @@
 {
   "enemies": [
     {
-      "id": "goblin",
-      "name": "Goblin Scout",
-      "baseHealth": 14,
-      "actions": [
-        { "id": "slash", "name": "Slash", "damage": 4 },
-        { "id": "rest", "name": "Rest", "block": 3 },
-        { "id": "slash", "name": "Slash", "damage": 4 }
-      ],
-      "scalingFactor": 1.0
-    },
-    {
-      "id": "skeleton",
-      "name": "Skeleton",
-      "baseHealth": 18,
-      "actions": [
-        { "id": "bone_attack", "name": "Bone Strike", "damage": 6 },
-        { "id": "bone_attack", "name": "Bone Strike", "damage": 6 },
-        { "id": "rattle", "name": "Rattle", "statusEffects": [{ "type": "weak", "stacks": 1 }] }
-      ],
-      "scalingFactor": 1.0
-    },
-    {
-      "id": "skeleton_weaver",
-      "name": "Skeleton Weaver",
-      "baseHealth": 15,
-      "movementPattern": "weaver",
-      "scalingFactor": 1.15,
-      "actions": [
-        { "id": "weaver_strike", "name": "Quick Strike", "damage": 5 }
-      ]
-    },
-    {
-      "id": "witch",
-      "name": "Swamp Witch",
-      "baseHealth": 15,
-      "actions": [
-        { "id": "curse", "name": "Curse", "statusEffects": [{ "type": "poison", "stacks": 3 }] },
-        { "id": "spell", "name": "Hex Bolt", "damage": 7 },
-        { "id": "hex", "name": "Hex", "statusEffects": [{ "type": "vulnerable", "stacks": 2 }] }
-      ],
-      "scalingFactor": 1.1
-    },
-    {
-      "id": "knight",
-      "name": "Dark Knight",
-      "baseHealth": 28,
-      "actions": [
-        { "id": "heavy_blow", "name": "Heavy Blow", "damage": 8 },
-        { "id": "shield_up", "name": "Shield Up", "block": 10 },
-        { "id": "heavy_blow", "name": "Heavy Blow", "damage": 8 },
-        { "id": "intimidate", "name": "Intimidate", "statusEffects": [{ "type": "weak", "stacks": 2 }] }
-      ],
-      "scalingFactor": 1.15
-    },
-    {
-      "id": "demon",
-      "name": "Infernal Demon",
-      "baseHealth": 38,
-      "actions": [
-        { "id": "infernal_strike", "name": "Infernal Strike", "damage": 12 },
-        { "id": "curse_all", "name": "Curse All", "statusEffects": [{ "type": "vulnerable", "stacks": 2 }] },
-        { "id": "infernal_strike", "name": "Infernal Strike", "damage": 12 },
-        { "id": "hellfire", "name": "Hellfire", "damage": 8, "statusEffects": [{ "type": "poison", "stacks": 2 }] }
-      ],
-      "scalingFactor": 1.2
-    },
-
-    {
-      "id": "whisperer",
-      "name": "The Whisperer",
-      "baseHealth": 20,
-      "lore": "It speaks truths you wish you'd never heard.",
-      "movementPattern": "lurker",
-      "actions": [
-        { "id": "whisper", "name": "Maddening Whisper", "statusEffects": [{ "type": "doom", "stacks": 1 }] },
-        { "id": "psychic_lance", "name": "Psychic Lance", "damage": 9 },
-        { "id": "whisper", "name": "Maddening Whisper", "statusEffects": [{ "type": "frail", "stacks": 2 }] }
-      ],
-      "scalingFactor": 1.12
-    },
-    {
-      "id": "ink_wraith",
-      "name": "Ink Wraith",
-      "baseHealth": 16,
-      "lore": "Born from spilled ink and forgotten nightmares.",
-      "movementPattern": "weaver",
-      "actions": [
-        { "id": "ink_slash", "name": "Ink Slash", "damage": 6, "statusEffects": [{ "type": "bleed", "stacks": 2 }] },
-        { "id": "fade", "name": "Fade", "block": 8 },
-        { "id": "ink_slash", "name": "Ink Slash", "damage": 6, "statusEffects": [{ "type": "bleed", "stacks": 2 }] }
-      ],
-      "scalingFactor": 1.1
-    },
-    {
-      "id": "hollow_priest",
-      "name": "Hollow Priest",
-      "baseHealth": 22,
-      "lore": "It prays to things that should not be prayed to.",
-      "movementPattern": "healer",
-      "actions": [
-        { "id": "dark_prayer", "name": "Dark Prayer", "heal": 8 },
-        { "id": "smite", "name": "Smite", "damage": 7 },
-        { "id": "consecrate", "name": "Consecrate", "statusEffects": [{ "type": "strength", "stacks": 2 }] },
-        { "id": "smite", "name": "Smite", "damage": 7 }
-      ],
-      "scalingFactor": 1.15
-    },
-    {
-      "id": "crawling_horror",
-      "name": "Crawling Horror",
+      "id": "e_skeletal_horror",
+      "name": "Skeletal Horror",
       "baseHealth": 30,
-      "lore": "It has too many legs. Far too many.",
-      "movementPattern": "charger",
       "actions": [
-        { "id": "lunge", "name": "Lunge", "damage": 10 },
-        { "id": "lunge", "name": "Lunge", "damage": 10 },
-        { "id": "coil", "name": "Coil", "block": 12 },
-        { "id": "devour", "name": "Devour", "damage": 14, "statusEffects": [{ "type": "vulnerable", "stacks": 2 }] }
+        {
+          "id": "act_0",
+          "name": "Bone Crush",
+          "damage": 8
+        },
+        {
+          "id": "act_1",
+          "name": "Bleed Bite",
+          "damage": 2,
+          "statusEffects": [
+            {
+              "type": "bleed",
+              "stacks": 2
+            }
+          ]
+        }
       ],
-      "scalingFactor": 1.18
+      "scalingFactor": 1.2,
+      "isBoss": false,
+      "lore": "A terrifying foe."
     },
     {
-      "id": "gallery_phantom",
-      "name": "Gallery Phantom",
-      "baseHealth": 12,
-      "lore": "A painting that stepped out of its frame.",
-      "movementPattern": "weaver",
+      "id": "e_shadow_reaper",
+      "name": "Shadow Reaper",
+      "baseHealth": 45,
       "actions": [
-        { "id": "haunt", "name": "Haunt", "statusEffects": [{ "type": "weak", "stacks": 1 }, { "type": "frail", "stacks": 1 }] },
-        { "id": "spectral_claw", "name": "Spectral Claw", "damage": 5 },
-        { "id": "spectral_claw", "name": "Spectral Claw", "damage": 5 }
+        {
+          "id": "act_0",
+          "name": "Dark Slash",
+          "damage": 12
+        },
+        {
+          "id": "act_1",
+          "name": "Nightmare Aura",
+          "damage": 2,
+          "statusEffects": [
+            {
+              "type": "doom",
+              "stacks": 2
+            }
+          ]
+        }
       ],
-      "scalingFactor": 1.05
+      "scalingFactor": 1.2,
+      "isBoss": false,
+      "lore": "A terrifying foe."
     },
     {
-      "id": "ink_stained_eye",
-      "name": "The Ink-Stained Eye",
-      "baseHealth": 120,
-      "lore": "It sees all. It knows all. It hungers for all.",
+      "id": "e_ghoul_lord",
+      "name": "Ghoul Lord",
+      "baseHealth": 80,
+      "actions": [
+        {
+          "id": "act_0",
+          "name": "Summon Minions",
+          "summon": "e_shade"
+        },
+        {
+          "id": "act_1",
+          "name": "Ravenous Bite",
+          "damage": 15
+        }
+      ],
+      "scalingFactor": 1.2,
       "isBoss": true,
-      "actions": [
-        { "id": "gaze", "name": "Abyssal Gaze", "damage": 12, "statusEffects": [{ "type": "doom", "stacks": 1 }] },
-        { "id": "ink_flood", "name": "Ink Flood", "damage": 8, "statusEffects": [{ "type": "bleed", "stacks": 3 }] },
-        { "id": "blink", "name": "Blink", "block": 20 },
-        { "id": "summon_wraith", "name": "Summon Wraith", "summon": "ink_wraith" },
-        { "id": "all_seeing", "name": "All-Seeing", "statusEffects": [{ "type": "vulnerable", "stacks": 3 }, { "type": "weak", "stacks": 2 }] },
-        { "id": "annihilate", "name": "Annihilate", "damage": 20 }
-      ],
-      "scalingFactor": 1.0
+      "lore": "A terrifying foe."
     }
   ]
 }

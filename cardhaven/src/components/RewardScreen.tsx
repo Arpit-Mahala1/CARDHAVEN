@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card as CardType } from '../types';
 import Card from './Card';
-import cardsData from '../data/cards.json';
+import { useGameContent } from '../hooks/useGameContent';
 
 interface RewardScreenProps {
   onPickCard: (card: CardType) => void;
@@ -11,12 +11,15 @@ interface RewardScreenProps {
 
 export default function RewardScreen({ onPickCard, onSkip, floor }: RewardScreenProps) {
   const [choices, setChoices] = useState<CardType[]>([]);
+  const { getRandomCard } = useGameContent();
 
   useEffect(() => {
     // Generate 3 random cards for reward
-    const allCards = (cardsData as { cards: CardType[] }).cards;
-    const shuffled = [...allCards].sort(() => 0.5 - Math.random());
-    setChoices(shuffled.slice(0, 3));
+    const newChoices: CardType[] = [];
+    for (let i = 0; i < 3; i++) {
+      newChoices.push(getRandomCard(Math.random()));
+    }
+    setChoices(newChoices);
   }, []);
 
   return (
