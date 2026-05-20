@@ -1,6 +1,6 @@
 import { 
   Card, Enemy, GameState, GameEvent, Intent, 
-  StatusEffectType, Relic, ShopState, StatusEffect
+  StatusEffectType, Relic, ShopState, StatusEffect, EnemyAction
 } from '../types';
 import cardData from '../data/cards.json';
 import enemyData from '../data/enemies.json';

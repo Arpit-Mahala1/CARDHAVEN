@@ -17,7 +17,7 @@ export default function RewardScreen({ onPickCard, onSkip, floor }: RewardScreen
     // Generate 3 random cards for reward
     const newChoices: CardType[] = [];
     for (let i = 0; i < 3; i++) {
-      newChoices.push(getRandomCard(Math.random()));
+      newChoices.push(getRandomCard(Math.random));
     }
     setChoices(newChoices);
   }, []);

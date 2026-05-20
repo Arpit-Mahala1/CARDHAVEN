@@ -1,94 +1,778 @@
 {
   "cards": [
     {
-      "id": "c_ancient_blight",
-      "name": "Ancient Blight",
-      "description": "Apply 2 Bleed to all enemies and gain 5 Block.",
+      "id": "force_wave",
+      "name": "Force Wave",
+      "description": "Deal 6 damage and push target back 1 row.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {
+        "damage": 6,
+        "knockback": 1
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "fireball",
+      "name": "Fireball",
+      "description": "Deal 10 damage in a 2x2 area.",
       "cost": 2,
       "cardType": "attack",
-      "rarity": "rare",
-      "effect": {},
-      "image": "assets/cards/ancient_blight.png"
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 10,
+        "area": "2x2"
+      },
+      "targetType": "cell"
     },
     {
-      "id": "c_spectral_slash",
-      "name": "Spectral Slash",
-      "description": "Deal 12 damage. If any enemy is Bleeding, deal +4 damage.",
-      "cost": 1,
-      "cardType": "attack",
-      "rarity": "common",
-      "effect": {},
-      "image": "assets/cards/spectral_slash.png"
-    },
-    {
-      "id": "c_gothic_ritual",
-      "name": "Gothic Ritual",
-      "description": "Draw 2 cards. If you have no cards in hand, draw 2 additional cards.",
-      "cost": 0,
+      "id": "holy_cross",
+      "name": "Holy Cross",
+      "description": "Deal 8 damage in a cross shape.",
+      "cost": 2,
       "cardType": "attack",
       "rarity": "uncommon",
-      "effect": {},
-      "image": "assets/cards/gothic_ritual.png"
+      "effect": {
+        "damage": 8,
+        "area": "cross"
+      },
+      "targetType": "cell"
     },
     {
-      "id": "c_crippling_shroud",
-      "name": "Crippling Shroud",
-      "description": "Apply 1 Weak and 1 Vulnerable to a random enemy.",
+      "id": "strike",
+      "name": "Strike",
+      "description": "Deal 6 damage.",
       "cost": 1,
       "cardType": "attack",
       "rarity": "common",
-      "effect": {},
-      "image": "assets/cards/crippling_shroud.png"
+      "effect": {
+        "damage": 6
+      },
+      "targetType": "cell"
     },
     {
-      "id": "c_wailing_abyss",
-      "name": "Wailing Abyss",
-      "description": "All enemies lose 5 HP and gain 2 Doom.",
+      "id": "defend",
+      "name": "Defend",
+      "description": "Gain 5 block.",
+      "cost": 1,
+      "cardType": "defense",
+      "rarity": "common",
+      "effect": {
+        "block": 5
+      },
+      "targetType": "none"
+    },
+    {
+      "id": "bash",
+      "name": "Bash",
+      "description": "Deal 8 damage. Apply 2 Vulnerable.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {
+        "damage": 8,
+        "statusEffects": [
+          {
+            "type": "vulnerable",
+            "stacks": 2
+          }
+        ]
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "brace",
+      "name": "Brace",
+      "description": "Gain 8 block. Apply 1 Frail to yourself.",
+      "cost": 1,
+      "cardType": "defense",
+      "rarity": "common",
+      "effect": {
+        "block": 8,
+        "statusEffects": [
+          {
+            "type": "frail",
+            "stacks": 1
+          }
+        ],
+        "applyToSelf": true
+      },
+      "targetType": "none"
+    },
+    {
+      "id": "pummel",
+      "name": "Pummel",
+      "description": "Deal 3 damage 3 times.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {
+        "damage": 3,
+        "hits": 3
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "study",
+      "name": "Study",
+      "description": "Draw 2 cards.",
+      "cost": 1,
+      "cardType": "draw",
+      "rarity": "uncommon",
+      "effect": {
+        "draw": 2
+      },
+      "targetType": "none"
+    },
+    {
+      "id": "poison_gas",
+      "name": "Poison Gas",
+      "description": "Apply 3 Poison to an enemy.",
+      "cost": 2,
+      "cardType": "utility",
+      "rarity": "uncommon",
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "poison",
+            "stacks": 3
+          }
+        ]
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "power_up",
+      "name": "Power Up",
+      "description": "Gain 2 Strength this turn.",
+      "cost": 1,
+      "cardType": "power",
+      "rarity": "uncommon",
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "strength",
+            "stacks": 2
+          }
+        ],
+        "applyToSelf": true
+      },
+      "targetType": "none"
+    },
+    {
+      "id": "heavy_blade",
+      "name": "Heavy Blade",
+      "description": "Deal 16 damage.",
+      "cost": 3,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 16
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "shield",
+      "name": "Shield Bash",
+      "description": "Gain 12 block.",
+      "cost": 2,
+      "cardType": "defense",
+      "rarity": "uncommon",
+      "effect": {
+        "block": 12
+      },
+      "targetType": "none"
+    },
+    {
+      "id": "whirlwind",
+      "name": "Whirlwind",
+      "description": "Deal 5 damage to all enemies.",
       "cost": 3,
       "cardType": "attack",
       "rarity": "rare",
-      "effect": {},
-      "image": "assets/cards/wailing_abyss.png"
+      "effect": {
+        "damage": 5
+      },
+      "targetType": "row"
     },
     {
-      "id": "c_ashen_shield",
-      "name": "Ashen Shield",
-      "description": "Gain 12 Block. If you have any Block, gain +4 Block.",
-      "cost": 1,
-      "cardType": "attack",
-      "rarity": "common",
-      "effect": {},
-      "image": "assets/cards/ashen_shield.png"
-    },
-    {
-      "id": "c_cursed_bomb",
-      "name": "Cursed Bomb",
-      "description": "Deal 20 damage to a random enemy. If that enemy dies, deal 10 damage to all enemies.",
+      "id": "alchemy",
+      "name": "Alchemy",
+      "description": "Draw 3 cards. Gain 1 Weak.",
       "cost": 2,
-      "cardType": "attack",
-      "rarity": "uncommon",
-      "effect": {},
-      "image": "assets/cards/cursed_bomb.png"
+      "cardType": "draw",
+      "rarity": "rare",
+      "effect": {
+        "draw": 3,
+        "statusEffects": [
+          {
+            "type": "weak",
+            "stacks": 1
+          }
+        ],
+        "applyToSelf": true
+      },
+      "targetType": "none"
     },
     {
-      "id": "c_haunted_curse",
-      "name": "Haunted Curse",
-      "description": "Apply 2 Poison to all enemies. If any enemy dies this turn, draw 2 cards.",
-      "cost": 1,
-      "cardType": "attack",
-      "rarity": "uncommon",
-      "effect": {},
-      "image": "assets/cards/haunted_curse.png"
-    },
-    {
-      "id": "c_shroud_of_night",
-      "name": "Shroud of Night",
-      "description": "Gain Intangible for 1 turn. If you already have Intangible, gain 2 Artifact.",
+      "id": "soul_strike",
+      "name": "Soul Strike",
+      "description": "Deal 12 damage. Apply 2 Vulnerable.",
       "cost": 2,
       "cardType": "attack",
       "rarity": "rare",
-      "effect": {},
-      "image": "assets/cards/shroud_of_night.png"
+      "effect": {
+        "damage": 12,
+        "statusEffects": [
+          {
+            "type": "vulnerable",
+            "stacks": 2
+          }
+        ]
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "iron_wall",
+      "name": "Iron Wall",
+      "description": "Gain 20 block.",
+      "cost": 3,
+      "cardType": "defense",
+      "rarity": "rare",
+      "effect": {
+        "block": 20
+      },
+      "targetType": "none"
+    },
+    {
+      "id": "arcane_surge",
+      "name": "Arcane Surge",
+      "description": "Gain 3 Strength. Draw 1 card.",
+      "cost": 3,
+      "cardType": "power",
+      "rarity": "legendary",
+      "effect": {
+        "draw": 1,
+        "statusEffects": [
+          {
+            "type": "strength",
+            "stacks": 3
+          }
+        ],
+        "applyToSelf": true
+      },
+      "targetType": "none"
+    },
+    {
+      "id": "quick_slash",
+      "name": "Quick Slash",
+      "description": "Deal 4 damage. Draw 1 card.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {
+        "damage": 4,
+        "draw": 1
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "meditation",
+      "name": "Meditation",
+      "description": "Gain 6 block. Draw 1 card.",
+      "cost": 2,
+      "cardType": "defense",
+      "rarity": "uncommon",
+      "effect": {
+        "block": 6,
+        "draw": 1
+      },
+      "targetType": "none"
+    },
+    {
+      "id": "venomous",
+      "name": "Venomous",
+      "description": "Deal 5 damage. Apply 2 Poison.",
+      "cost": 2,
+      "cardType": "utility",
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 5,
+        "statusEffects": [
+          {
+            "type": "poison",
+            "stacks": 2
+          }
+        ]
+      },
+      "targetType": "cell"
+    },
+    {
+      "id": "c_strike",
+      "name": "Strike",
+      "description": "Deal 6 damage.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {
+        "damage": 6
+      },
+      "image": "assets/cards/strike.png"
+    },
+    {
+      "id": "c_defend",
+      "name": "Defend",
+      "description": "Gain 5 block.",
+      "cost": 1,
+      "cardType": "defense",
+      "rarity": "common",
+      "effect": {
+        "block": 5
+      },
+      "image": "assets/cards/defend.png"
+    },
+    {
+      "id": "c_blood_sacrifice",
+      "name": "Blood Sacrifice",
+      "description": "Take 3 damage. Gain 2 energy.",
+      "cost": 0,
+      "cardType": "utility",
+      "rarity": "uncommon",
+      "targetType": "none",
+      "effect": {
+        "selfDamage": 3,
+        "energyGain": 2
+      },
+      "image": "assets/cards/blood_sacrifice.png"
+    },
+    {
+      "id": "c_vampiric_bite",
+      "name": "Vampiric Bite",
+      "description": "Deal 8 damage. Heal for half the unblocked damage dealt.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 8,
+        "heal": 4
+      },
+      "image": "assets/cards/vampiric_bite.png"
+    },
+    {
+      "id": "c_dark_pact",
+      "name": "Dark Pact",
+      "description": "Draw 3 cards. Take 2 damage.",
+      "cost": 1,
+      "cardType": "draw",
+      "rarity": "uncommon",
+      "targetType": "none",
+      "effect": {
+        "draw": 3,
+        "selfDamage": 2
+      },
+      "image": "assets/cards/dark_pact.png"
+    },
+    {
+      "id": "c_soul_reap",
+      "name": "Soul Reap",
+      "description": "Deal 12 damage. If fatal, heal 5 HP.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "rare",
+      "targetType": "cell",
+      "effect": {
+        "damage": 12
+      },
+      "image": "assets/cards/soul_reap.png"
+    },
+    {
+      "id": "c_bone_shield",
+      "name": "Bone Shield",
+      "description": "Gain 12 block. Apply 1 Frail to yourself.",
+      "cost": 1,
+      "cardType": "defense",
+      "rarity": "common",
+      "effect": {
+        "block": 12,
+        "statusEffects": [
+          {
+            "type": "frail",
+            "stacks": 1
+          }
+        ]
+      },
+      "applyToSelf": true,
+      "image": "assets/cards/bone_shield.png"
+    },
+    {
+      "id": "c_toxic_cloud",
+      "name": "Toxic Cloud",
+      "description": "Apply 3 Poison to all enemies.",
+      "cost": 2,
+      "cardType": "utility",
+      "rarity": "uncommon",
+      "targetType": "all",
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "poison",
+            "stacks": 3
+          }
+        ]
+      },
+      "image": "assets/cards/toxic_cloud.png"
+    },
+    {
+      "id": "c_frenzy",
+      "name": "Frenzy",
+      "description": "Deal 3 damage 4 times.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 3,
+        "hits": 4
+      },
+      "image": "assets/cards/frenzy.png"
+    },
+    {
+      "id": "c_shadow_cloak",
+      "name": "Shadow Cloak",
+      "description": "Gain 8 block and 1 Dexterity.",
+      "cost": 2,
+      "cardType": "power",
+      "rarity": "rare",
+      "targetType": "none",
+      "effect": {
+        "block": 8,
+        "statusEffects": [
+          {
+            "type": "dexterity",
+            "stacks": 1
+          }
+        ]
+      },
+      "applyToSelf": true,
+      "image": "assets/cards/shadow_cloak.png"
+    },
+    {
+      "id": "c_necromancy",
+      "name": "Necromancy",
+      "description": "Exhaust a card. Draw 2 cards.",
+      "cost": 1,
+      "cardType": "utility",
+      "rarity": "rare",
+      "effect": {
+        "draw": 2
+      },
+      "exhaust": true,
+      "image": "assets/cards/necromancy.png"
+    },
+    {
+      "id": "c_corpse_explosion",
+      "name": "Corpse Explosion",
+      "description": "Apply 4 Doom to an enemy.",
+      "cost": 2,
+      "cardType": "utility",
+      "rarity": "rare",
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "doom",
+            "stacks": 4
+          }
+        ]
+      },
+      "image": "assets/cards/corpse_explosion.png"
+    },
+    {
+      "id": "c_wither",
+      "name": "Wither",
+      "description": "Apply 2 Weak and 2 Vulnerable to an enemy.",
+      "cost": 1,
+      "cardType": "utility",
+      "rarity": "uncommon",
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "weak",
+            "stacks": 2
+          },
+          {
+            "type": "vulnerable",
+            "stacks": 2
+          }
+        ]
+      },
+      "image": "assets/cards/wither.png"
+    },
+    {
+      "id": "c_phantom_strike",
+      "name": "Phantom Strike",
+      "description": "Deal 9 damage. Ignore block.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 9
+      },
+      "image": "assets/cards/phantom_strike.png"
+    },
+    {
+      "id": "c_cursed_blade",
+      "name": "Cursed Blade",
+      "description": "Gain 3 Strength. Take 1 damage at the end of your turn.",
+      "cost": 1,
+      "cardType": "power",
+      "rarity": "rare",
+      "targetType": "none",
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "strength",
+            "stacks": 3
+          },
+          {
+            "type": "bleed",
+            "stacks": 1
+          }
+        ]
+      },
+      "applyToSelf": true,
+      "image": "assets/cards/cursed_blade.png"
+    },
+    {
+      "id": "c_blood_barrier",
+      "name": "Blood Barrier",
+      "description": "Gain Block equal to 20% of your missing HP.",
+      "cost": 1,
+      "cardType": "defense",
+      "rarity": "uncommon",
+      "effect": {
+        "block": 10
+      },
+      "image": "assets/cards/blood_barrier.png"
+    },
+    {
+      "id": "c_terror",
+      "name": "Terror",
+      "description": "Apply 99 Vulnerable to an enemy. Exhaust.",
+      "cost": 1,
+      "cardType": "utility",
+      "rarity": "rare",
+      "exhaust": true,
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "vulnerable",
+            "stacks": 99
+          }
+        ]
+      },
+      "image": "assets/cards/terror.png"
+    },
+    {
+      "id": "c_nightmare",
+      "name": "Nightmare",
+      "description": "Choose a card. Add 3 copies of it to your hand.",
+      "cost": 3,
+      "cardType": "utility",
+      "rarity": "legendary",
+      "effect": {
+        "draw": 3
+      },
+      "exhaust": true,
+      "image": "assets/cards/nightmare.png"
+    },
+    {
+      "id": "c_abyssal_gaze",
+      "name": "Abyssal Gaze",
+      "description": "Deal 5 damage to all enemies. Apply 1 Weak.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "targetType": "all",
+      "effect": {
+        "damage": 5,
+        "statusEffects": [
+          {
+            "type": "weak",
+            "stacks": 1
+          }
+        ]
+      },
+      "image": "assets/cards/abyssal_gaze.png"
+    },
+    {
+      "id": "c_ritual_dagger",
+      "name": "Ritual Dagger",
+      "description": "Deal 15 damage. If fatal, permanently increase this card's damage by 3. Exhaust.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "rare",
+      "targetType": "cell",
+      "exhaust": true,
+      "effect": {
+        "damage": 15
+      },
+      "image": "assets/cards/ritual_dagger.png"
+    },
+    {
+      "id": "c_shatter",
+      "name": "Shatter",
+      "description": "Remove all block from an enemy. Deal 10 damage.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {
+        "damage": 10
+      },
+      "image": "assets/cards/shatter.png"
+    },
+    {
+      "id": "c_consume",
+      "name": "Consume",
+      "description": "Lose 1 Max HP. Gain 2 Strength. Exhaust.",
+      "cost": 0,
+      "cardType": "power",
+      "rarity": "rare",
+      "exhaust": true,
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "strength",
+            "stacks": 2
+          }
+        ]
+      },
+      "applyToSelf": true,
+      "image": "assets/cards/consume.png"
+    },
+    {
+      "id": "c_reaper_scythe",
+      "name": "Reaper's Scythe",
+      "description": "Deal damage equal to 10% of the enemy's Max HP.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "legendary",
+      "effect": {
+        "healthPercentDamage": 10
+      },
+      "image": "assets/cards/reaper_scythe.png"
+    },
+    {
+      "id": "c_plague",
+      "name": "Plague",
+      "description": "Apply 2 Poison to an enemy. Spread its Poison to all other enemies.",
+      "cost": 2,
+      "cardType": "utility",
+      "rarity": "rare",
+      "targetType": "cell",
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "poison",
+            "stacks": 2
+          }
+        ]
+      },
+      "image": "assets/cards/plague.png"
+    },
+    {
+      "id": "c_dark_ritual",
+      "name": "Dark Ritual",
+      "description": "Gain 3 Ritual.",
+      "cost": 1,
+      "cardType": "power",
+      "rarity": "rare",
+      "targetType": "none",
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "ritual",
+            "stacks": 3
+          }
+        ]
+      },
+      "applyToSelf": true,
+      "image": "assets/cards/dark_ritual.png"
+    },
+    {
+      "id": "c_carrion_swarm",
+      "name": "Carrion Swarm",
+      "description": "Deal 2 damage to all enemies for each status effect they have.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "targetType": "all",
+      "effect": {
+        "damage": 2,
+        "hits": 1
+      },
+      "image": "assets/cards/carrion_swarm.png"
+    },
+    {
+      "id": "c_spectral_shield",
+      "name": "Spectral Shield",
+      "description": "Gain 5 block. Retain your hand this turn.",
+      "cost": 1,
+      "cardType": "defense",
+      "rarity": "common",
+      "effect": {
+        "block": 5
+      },
+      "image": "assets/cards/spectral_shield.png"
+    },
+    {
+      "id": "c_death_knell",
+      "name": "Death Knell",
+      "description": "If the enemy is below 30% HP, instantly kill them.",
+      "cost": 3,
+      "cardType": "attack",
+      "rarity": "legendary",
+      "effect": {
+        "damage": 999
+      },
+      "image": "assets/cards/death_knell.png"
+    },
+    {
+      "id": "c_blood_boil",
+      "name": "Blood Boil",
+      "description": "All enemies take 5 damage and gain 1 Bleed.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "targetType": "all",
+      "effect": {
+        "damage": 5,
+        "statusEffects": [
+          {
+            "type": "bleed",
+            "stacks": 1
+          }
+        ]
+      },
+      "image": "assets/cards/blood_boil.png"
+    },
+    {
+      "id": "c_banshee_wail",
+      "name": "Banshee's Wail",
+      "description": "Apply 2 Weak to all enemies. Exhaust.",
+      "cost": 0,
+      "cardType": "utility",
+      "rarity": "uncommon",
+      "targetType": "all",
+      "exhaust": true,
+      "effect": {
+        "statusEffects": [
+          {
+            "type": "weak",
+            "stacks": 2
+          }
+        ]
+      },
+      "image": "assets/cards/banshee_wail.png"
     }
   ]
 }

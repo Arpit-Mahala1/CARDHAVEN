@@ -1,0 +1,76 @@
+{
+  "enemies": [
+    {
+      "id": "e_skeletal_horror",
+      "name": "Skeletal Horror",
+      "baseHealth": 30,
+      "actions": [
+        {
+          "id": "act_0",
+          "name": "Bone Crush",
+          "damage": 8
+        },
+        {
+          "id": "act_1",
+          "name": "Bleed Bite",
+          "damage": 2,
+          "statusEffects": [
+            {
+              "type": "bleed",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "scalingFactor": 1.2,
+      "isBoss": false,
+      "lore": "A terrifying foe."
+    },
+    {
+      "id": "e_shadow_reaper",
+      "name": "Shadow Reaper",
+      "baseHealth": 45,
+      "actions": [
+        {
+          "id": "act_0",
+          "name": "Dark Slash",
+          "damage": 12
+        },
+        {
+          "id": "act_1",
+          "name": "Nightmare Aura",
+          "damage": 2,
+          "statusEffects": [
+            {
+              "type": "doom",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "scalingFactor": 1.2,
+      "isBoss": false,
+      "lore": "A terrifying foe."
+    },
+    {
+      "id": "e_ghoul_lord",
+      "name": "Ghoul Lord",
+      "baseHealth": 80,
+      "actions": [
+        {
+          "id": "act_0",
+          "name": "Summon Minions",
+          "summon": "e_shade"
+        },
+        {
+          "id": "act_1",
+          "name": "Ravenous Bite",
+          "damage": 15
+        }
+      ],
+      "scalingFactor": 1.2,
+      "isBoss": true,
+      "lore": "A terrifying foe."
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "cards": [
+    {
+      "id": "c_ancient_blight",
+      "name": "Ancient Blight",
+      "description": "Apply 2 Bleed to all enemies and gain 5 Block.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "rare",
+      "effect": {},
+      "image": "assets/cards/ancient_blight.png"
+    },
+    {
+      "id": "c_spectral_slash",
+      "name": "Spectral Slash",
+      "description": "Deal 12 damage. If any enemy is Bleeding, deal +4 damage.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {},
+      "image": "assets/cards/spectral_slash.png"
+    },
+    {
+      "id": "c_gothic_ritual",
+      "name": "Gothic Ritual",
+      "description": "Draw 2 cards. If you have no cards in hand, draw 2 additional cards.",
+      "cost": 0,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {},
+      "image": "assets/cards/gothic_ritual.png"
+    },
+    {
+      "id": "c_crippling_shroud",
+      "name": "Crippling Shroud",
+      "description": "Apply 1 Weak and 1 Vulnerable to a random enemy.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {},
+      "image": "assets/cards/crippling_shroud.png"
+    },
+    {
+      "id": "c_wailing_abyss",
+      "name": "Wailing Abyss",
+      "description": "All enemies lose 5 HP and gain 2 Doom.",
+      "cost": 3,
+      "cardType": "attack",
+      "rarity": "rare",
+      "effect": {},
+      "image": "assets/cards/wailing_abyss.png"
+    },
+    {
+      "id": "c_ashen_shield",
+      "name": "Ashen Shield",
+      "description": "Gain 12 Block. If you have any Block, gain +4 Block.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "common",
+      "effect": {},
+      "image": "assets/cards/ashen_shield.png"
+    },
+    {
+      "id": "c_cursed_bomb",
+      "name": "Cursed Bomb",
+      "description": "Deal 20 damage to a random enemy. If that enemy dies, deal 10 damage to all enemies.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {},
+      "image": "assets/cards/cursed_bomb.png"
+    },
+    {
+      "id": "c_haunted_curse",
+      "name": "Haunted Curse",
+      "description": "Apply 2 Poison to all enemies. If any enemy dies this turn, draw 2 cards.",
+      "cost": 1,
+      "cardType": "attack",
+      "rarity": "uncommon",
+      "effect": {},
+      "image": "assets/cards/haunted_curse.png"
+    },
+    {
+      "id": "c_shroud_of_night",
+      "name": "Shroud of Night",
+      "description": "Gain Intangible for 1 turn. If you already have Intangible, gain 2 Artifact.",
+      "cost": 2,
+      "cardType": "attack",
+      "rarity": "rare",
+      "effect": {},
+      "image": "assets/cards/shroud_of_night.png"
+    }
+  ]
+}

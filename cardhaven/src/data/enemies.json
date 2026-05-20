@@ -1,76 +1,657 @@
 {
   "enemies": [
     {
-      "id": "e_skeletal_horror",
-      "name": "Skeletal Horror",
-      "baseHealth": 30,
+      "id": "skeleton_weaver",
+      "name": "Skeleton Weaver",
+      "baseHealth": 15,
+      "movementPattern": "weaver",
+      "scalingFactor": 1.15,
       "actions": [
         {
-          "id": "act_0",
-          "name": "Bone Crush",
+          "id": "weaver_strike",
+          "name": "Quick Strike",
+          "damage": 5
+        }
+      ]
+    },
+    {
+      "id": "goblin",
+      "name": "Goblin Scout",
+      "baseHealth": 14,
+      "actions": [
+        {
+          "id": "slash",
+          "name": "Slash",
+          "damage": 4
+        },
+        {
+          "id": "rest",
+          "name": "Rest",
+          "block": 3
+        },
+        {
+          "id": "slash",
+          "name": "Slash",
+          "damage": 4
+        }
+      ],
+      "scalingFactor": 1
+    },
+    {
+      "id": "skeleton",
+      "name": "Skeleton",
+      "baseHealth": 18,
+      "actions": [
+        {
+          "id": "bone_attack",
+          "name": "Bone Strike",
+          "damage": 6
+        },
+        {
+          "id": "bone_attack",
+          "name": "Bone Strike",
+          "damage": 6
+        },
+        {
+          "id": "rattle",
+          "name": "Rattle",
+          "statusEffects": [
+            {
+              "type": "weak",
+              "stacks": 1
+            }
+          ]
+        }
+      ],
+      "scalingFactor": 1
+    },
+    {
+      "id": "witch",
+      "name": "Swamp Witch",
+      "baseHealth": 15,
+      "actions": [
+        {
+          "id": "curse",
+          "name": "Curse",
+          "statusEffects": [
+            {
+              "type": "poison",
+              "stacks": 3
+            }
+          ]
+        },
+        {
+          "id": "spell",
+          "name": "Hex Bolt",
+          "damage": 7
+        },
+        {
+          "id": "hex",
+          "name": "Hex",
+          "statusEffects": [
+            {
+              "type": "vulnerable",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "scalingFactor": 1.1
+    },
+    {
+      "id": "knight",
+      "name": "Dark Knight",
+      "baseHealth": 28,
+      "actions": [
+        {
+          "id": "heavy_blow",
+          "name": "Heavy Blow",
           "damage": 8
         },
         {
-          "id": "act_1",
-          "name": "Bleed Bite",
-          "damage": 2,
+          "id": "shield_up",
+          "name": "Shield Up",
+          "block": 10
+        },
+        {
+          "id": "heavy_blow",
+          "name": "Heavy Blow",
+          "damage": 8
+        },
+        {
+          "id": "intimidate",
+          "name": "Intimidate",
           "statusEffects": [
             {
-              "type": "bleed",
+              "type": "weak",
               "stacks": 2
             }
           ]
         }
       ],
-      "scalingFactor": 1.2,
-      "isBoss": false,
-      "lore": "A terrifying foe."
+      "scalingFactor": 1.15
     },
     {
-      "id": "e_shadow_reaper",
-      "name": "Shadow Reaper",
-      "baseHealth": 45,
+      "id": "demon",
+      "name": "Infernal Demon",
+      "baseHealth": 38,
       "actions": [
         {
-          "id": "act_0",
-          "name": "Dark Slash",
+          "id": "infernal_strike",
+          "name": "Infernal Strike",
           "damage": 12
         },
         {
-          "id": "act_1",
-          "name": "Nightmare Aura",
-          "damage": 2,
+          "id": "curse_all",
+          "name": "Curse All",
           "statusEffects": [
             {
-              "type": "doom",
+              "type": "vulnerable",
+              "stacks": 2
+            }
+          ]
+        },
+        {
+          "id": "infernal_strike",
+          "name": "Infernal Strike",
+          "damage": 12
+        },
+        {
+          "id": "hellfire",
+          "name": "Hellfire",
+          "damage": 8,
+          "statusEffects": [
+            {
+              "type": "poison",
               "stacks": 2
             }
           ]
         }
       ],
-      "scalingFactor": 1.2,
-      "isBoss": false,
-      "lore": "A terrifying foe."
+      "scalingFactor": 1.2
     },
     {
-      "id": "e_ghoul_lord",
-      "name": "Ghoul Lord",
-      "baseHealth": 80,
+      "id": "e_goblin",
+      "name": "Goblin Scavenger",
+      "baseHealth": 25,
+      "scalingFactor": 1.1,
       "actions": [
         {
-          "id": "act_0",
-          "name": "Summon Minions",
-          "summon": "e_shade"
+          "id": "a1",
+          "name": "Stab",
+          "damage": 6
         },
         {
-          "id": "act_1",
-          "name": "Ravenous Bite",
-          "damage": 15
+          "id": "a2",
+          "name": "Block",
+          "block": 5
         }
       ],
+      "lore": "A vile creature drawn to the scent of blood."
+    },
+    {
+      "id": "e_skeleton",
+      "name": "Skeletal Warrior",
+      "baseHealth": 35,
+      "scalingFactor": 1.1,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Slash",
+          "damage": 8
+        },
+        {
+          "id": "a2",
+          "name": "Defend",
+          "block": 8
+        }
+      ],
+      "lore": "Reanimated bones of a fallen soldier."
+    },
+    {
+      "id": "e_cultist",
+      "name": "Dark Cultist",
+      "baseHealth": 40,
+      "scalingFactor": 1.15,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Dark Strike",
+          "damage": 6
+        },
+        {
+          "id": "a2",
+          "name": "Incantation",
+          "statusEffects": [
+            {
+              "type": "ritual",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "lore": "Worships the ancient ones."
+    },
+    {
+      "id": "e_wraith",
+      "name": "Tormented Wraith",
+      "baseHealth": 30,
       "scalingFactor": 1.2,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Soul Drain",
+          "damage": 5,
+          "heal": 5
+        },
+        {
+          "id": "a2",
+          "name": "Haunt",
+          "statusEffects": [
+            {
+              "type": "weak",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "lore": "A spirit bound by suffering."
+    },
+    {
+      "id": "e_zombie",
+      "name": "Plague Zombie",
+      "baseHealth": 45,
+      "scalingFactor": 1.1,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Bite",
+          "damage": 7
+        },
+        {
+          "id": "a2",
+          "name": "Vomit",
+          "statusEffects": [
+            {
+              "type": "poison",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "lore": "A rotting corpse spreading disease."
+    },
+    {
+      "id": "e_gargoyle",
+      "name": "Stone Gargoyle",
+      "baseHealth": 60,
+      "scalingFactor": 1.1,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Smash",
+          "damage": 10
+        },
+        {
+          "id": "a2",
+          "name": "Stone Skin",
+          "block": 15
+        }
+      ],
+      "lore": "A stone guardian brought to life."
+    },
+    {
+      "id": "e_vampire_bat",
+      "name": "Vampire Bat",
+      "baseHealth": 20,
+      "scalingFactor": 1.05,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Swoop",
+          "damage": 4
+        },
+        {
+          "id": "a2",
+          "name": "Leech",
+          "damage": 3,
+          "heal": 3
+        }
+      ],
+      "lore": "A giant bat thirsting for blood."
+    },
+    {
+      "id": "e_demon",
+      "name": "Lesser Demon",
+      "baseHealth": 55,
+      "scalingFactor": 1.2,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Hellfire",
+          "damage": 12
+        },
+        {
+          "id": "a2",
+          "name": "Enrage",
+          "statusEffects": [
+            {
+              "type": "strength",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "lore": "A fiery fiend from the abyss."
+    },
+    {
+      "id": "e_banshee",
+      "name": "Wailing Banshee",
+      "baseHealth": 40,
+      "scalingFactor": 1.15,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Shriek",
+          "damage": 5,
+          "statusEffects": [
+            {
+              "type": "frail",
+              "stacks": 1
+            }
+          ]
+        },
+        {
+          "id": "a2",
+          "name": "Curse",
+          "statusEffects": [
+            {
+              "type": "vulnerable",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "lore": "Her scream paralyzes the soul."
+    },
+    {
+      "id": "e_spider",
+      "name": "Giant Cave Spider",
+      "baseHealth": 35,
+      "scalingFactor": 1.1,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Bite",
+          "damage": 8
+        },
+        {
+          "id": "a2",
+          "name": "Web",
+          "statusEffects": [
+            {
+              "type": "weak",
+              "stacks": 2
+            }
+          ]
+        }
+      ],
+      "lore": "Spins webs in the darkest corners."
+    },
+    {
+      "id": "e_necromancer",
+      "name": "Necromancer",
+      "baseHealth": 65,
+      "scalingFactor": 1.2,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Shadow Bolt",
+          "damage": 10
+        },
+        {
+          "id": "a2",
+          "name": "Summon",
+          "summon": "e_skeleton"
+        }
+      ],
+      "lore": "A master of the dark arts."
+    },
+    {
+      "id": "e_ghoul",
+      "name": "Ravenous Ghoul",
+      "baseHealth": 50,
+      "scalingFactor": 1.15,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Claw",
+          "damage": 9
+        },
+        {
+          "id": "a2",
+          "name": "Devour",
+          "damage": 6,
+          "heal": 6
+        }
+      ],
+      "lore": "Feasts on the flesh of the living."
+    },
+    {
+      "id": "e_shade",
+      "name": "Creeping Shade",
+      "baseHealth": 25,
+      "scalingFactor": 1.1,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Shadow Strike",
+          "damage": 7
+        },
+        {
+          "id": "a2",
+          "name": "Fade",
+          "block": 10
+        }
+      ],
+      "lore": "A manifestation of pure darkness."
+    },
+    {
+      "id": "e_blood_mage",
+      "name": "Blood Mage",
+      "baseHealth": 45,
+      "scalingFactor": 1.2,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Blood Boil",
+          "damage": 8,
+          "statusEffects": [
+            {
+              "type": "bleed",
+              "stacks": 1
+            }
+          ]
+        },
+        {
+          "id": "a2",
+          "name": "Siphon",
+          "damage": 5,
+          "heal": 5
+        }
+      ],
+      "lore": "Uses blood as fuel for magic."
+    },
+    {
+      "id": "e_flesh_golem",
+      "name": "Flesh Golem",
+      "baseHealth": 80,
+      "scalingFactor": 1.15,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Crush",
+          "damage": 15
+        },
+        {
+          "id": "a2",
+          "name": "Mend",
+          "heal": 10
+        }
+      ],
+      "lore": "An abomination stitched together."
+    },
+    {
+      "id": "e_shadow_knight",
+      "name": "Shadow Knight",
+      "baseHealth": 70,
+      "scalingFactor": 1.2,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Dark Cleave",
+          "damage": 12
+        },
+        {
+          "id": "a2",
+          "name": "Shield Wall",
+          "block": 20
+        }
+      ],
+      "lore": "A fallen knight sworn to darkness."
+    },
+    {
+      "id": "e_lich",
+      "name": "The Lich",
+      "baseHealth": 150,
+      "scalingFactor": 1.3,
       "isBoss": true,
-      "lore": "A terrifying foe."
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Soul Steal",
+          "damage": 10,
+          "heal": 10
+        },
+        {
+          "id": "a2",
+          "name": "Doom",
+          "statusEffects": [
+            {
+              "type": "doom",
+              "stacks": 1
+            }
+          ]
+        },
+        {
+          "id": "a3",
+          "name": "Summon",
+          "summon": "e_wraith"
+        }
+      ],
+      "lore": "An ancient undead sorcerer."
+    },
+    {
+      "id": "e_vampire_lord",
+      "name": "Vampire Lord",
+      "baseHealth": 180,
+      "scalingFactor": 1.3,
+      "isBoss": true,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Bite",
+          "damage": 15,
+          "heal": 15
+        },
+        {
+          "id": "a2",
+          "name": "Mesmerize",
+          "statusEffects": [
+            {
+              "type": "weak",
+              "stacks": 3
+            },
+            {
+              "type": "frail",
+              "stacks": 3
+            }
+          ]
+        },
+        {
+          "id": "a3",
+          "name": "Bat Swarm",
+          "damage": 5,
+          "hits": 3
+        }
+      ],
+      "lore": "Ruler of the night."
+    },
+    {
+      "id": "e_demon_king",
+      "name": "Demon King",
+      "baseHealth": 200,
+      "scalingFactor": 1.35,
+      "isBoss": true,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Inferno",
+          "damage": 20
+        },
+        {
+          "id": "a2",
+          "name": "Hellish Roar",
+          "statusEffects": [
+            {
+              "type": "vulnerable",
+              "stacks": 2
+            }
+          ]
+        },
+        {
+          "id": "a3",
+          "name": "Demonic Fortitude",
+          "block": 30
+        }
+      ],
+      "lore": "The supreme ruler of the abyss."
+    },
+    {
+      "id": "e_elder_god",
+      "name": "Awakened Elder God",
+      "baseHealth": 300,
+      "scalingFactor": 1.4,
+      "isBoss": true,
+      "actions": [
+        {
+          "id": "a1",
+          "name": "Mind Rend",
+          "damage": 15,
+          "statusEffects": [
+            {
+              "type": "weak",
+              "stacks": 1
+            }
+          ]
+        },
+        {
+          "id": "a2",
+          "name": "Reality Warp",
+          "statusEffects": [
+            {
+              "type": "doom",
+              "stacks": 1
+            }
+          ]
+        },
+        {
+          "id": "a3",
+          "name": "Eldritch Blast",
+          "damage": 25
+        }
+      ],
+      "lore": "A cosmic entity beyond comprehension."
     }
   ]
 }

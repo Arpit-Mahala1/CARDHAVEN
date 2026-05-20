@@ -97,7 +97,7 @@ class AudioManager {
     const bassPadGain = this.audioCtx.createGain();
     bassPad.type = 'sine';
     bassPad.frequency.setValueAtTime(27.5, this.audioCtx.currentTime); // A1
-    bassPadGain.gain.setValueAtTime(0.15, this.audioCtx.currentTime);
+    bassPadGain.gain.setValueAtTime(0.05, this.audioCtx.currentTime);
 
     bassPad.connect(bassPadGain);
     bassPadGain.connect(masterAmbientGain);

@@ -4,10 +4,12 @@ import { BattleEngine } from '../utils/battleEngine';
 import { generateEnemyEncounter } from '../utils/enemyGenerator';
 import cardsData from '../data/cards.json';
 import { GAME_CONSTANTS } from '../utils/balanceData';
+import { useGameContent } from './useGameContent';
 
 export function useGameState(autoEndTurn: boolean = false) {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const engineRef = useRef<BattleEngine | null>(null);
+  const { getStarterDeck } = useGameContent();
 
   const endTurn = useCallback(() => {
     const engine = engineRef.current;
@@ -225,25 +227,6 @@ export function useGameState(autoEndTurn: boolean = false) {
     rest,
     abandonRun,
   };
-}
-
-function getStarterDeck(characterClass: string): Card[] {
-  const allCards = (cardsData as { cards: Card[] }).cards;
-  const strike = allCards.find(c => c.id === 'strike')!;
-  const defend = allCards.find(c => c.id === 'defend')!;
-  const forceWave = allCards.find(c => c.id === 'force_wave')!;
-
-  let classBonusId = 'bash';
-  if (characterClass === 'mage') classBonusId = 'poison_gas';
-  if (characterClass === 'rogue') classBonusId = 'pummel';
-
-  const classCard = allCards.find(c => c.id === classBonusId) ?? allCards.find(c => c.rarity === 'common')!;
-
-  return [
-    strike, strike, strike, forceWave,
-    defend, defend, defend, defend,
-    classCard, classCard,
-  ];
 }
 
 function shuffleArray<T>(array: T[]): T[] {

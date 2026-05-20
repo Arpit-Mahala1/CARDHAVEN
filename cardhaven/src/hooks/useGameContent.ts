@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Card, Enemy } from '../types';
+import { Card, EnemyTemplate } from '../types';
 import cardsData from '../data/cards.json';
 import enemiesData from '../data/enemies.json';
 
@@ -10,8 +10,8 @@ import enemiesData from '../data/enemies.json';
  */
 export function useGameContent() {
   // Memoize raw arrays for performance; the JSON imports are objects with a "cards" / "enemies" key.
-  const cards: Card[] = useMemo(() => (cardsData as { cards: Card[] }).cards, []);
-  const enemies: Enemy[] = useMemo(() => (enemiesData as { enemies: Enemy[] }).enemies, []);
+  const cards: Card[] = useMemo(() => (cardsData as unknown as { cards: Card[] }).cards, []);
+  const enemies: EnemyTemplate[] = useMemo(() => (enemiesData as unknown as { enemies: EnemyTemplate[] }).enemies, []);
 
   // Define rarity weights (must sum to 1). Adjust as needed.
   const rarityWeights: Record<Card['rarity'], number> = {
@@ -42,28 +42,26 @@ export function useGameContent() {
   };
 
   /** Returns a random enemy (simple uniform distribution). */
-  const getRandomEnemy = (rng: () => number = Math.random): Enemy => {
+  const getRandomEnemy = (rng: () => number = Math.random): EnemyTemplate => {
     return enemies[Math.floor(rng() * enemies.length)];
   };
 
   const getStarterDeck = (characterClass: string): Card[] => {
-    // For now, just grab a basic set of cards
-    const attacks = cards.filter(c => c.cardType === 'attack').slice(0, 4);
-    const defends = cards.filter(c => c.cardType === 'defense').slice(0, 4);
-    const extras = cards.slice(0, 2);
+    const strike = cards.find(c => c.id === 'strike') || cards.find(c => c.id === 'c_strike') || cards[0];
+    const defend = cards.find(c => c.id === 'defend') || cards.find(c => c.id === 'c_defend') || cards[1];
     
-    // Fallback if not enough cards are loaded
-    if (attacks.length < 4 || defends.length < 4) {
-      return [...cards.slice(0, 10)];
-    }
-    
-    return [...attacks, ...defends, ...extras];
+    let classBonusId = 'bash';
+    if (characterClass === 'mage') classBonusId = 'poison_gas';
+    if (characterClass === 'rogue') classBonusId = 'pummel';
+
+    const classCard = cards.find(c => c.id === classBonusId) ?? (cards.find(c => c.rarity === 'common') || cards[2]);
+
+    return [
+      strike, strike, strike, strike,
+      defend, defend, defend, defend,
+      classCard, classCard,
+    ];
   };
 
-  return {
-    cards,
-    enemies,
-    getRandomCard,
-    getStarterDeck
-  };
+  return { cards, enemies, getRandomCard, getRandomEnemy, getStarterDeck };
 }
