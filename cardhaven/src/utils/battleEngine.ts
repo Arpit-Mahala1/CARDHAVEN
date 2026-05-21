@@ -301,9 +301,6 @@ export class BattleEngine {
     // 2. Enemies move down the grid
     this.advanceEnemies();
 
-    // 3. Spawn new enemies
-    this.spawnEnemies();
-
     // Check player death
     if (this.state.health <= 0) {
       this.state = { ...this.state, phase: 'gameover' };
