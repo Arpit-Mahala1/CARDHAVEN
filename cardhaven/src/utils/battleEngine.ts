@@ -301,6 +301,13 @@ export class BattleEngine {
     // 2. Enemies move down the grid
     this.advanceEnemies();
 
+    // If all enemies are defeated after movement, transition to reward rather
+    // than continuing the current floor with an empty board.
+    if (this.checkBattleEnd() === 'won') {
+      this.advanceToReward();
+      return;
+    }
+
     // Check player death
     if (this.state.health <= 0) {
       this.state = { ...this.state, phase: 'gameover' };
