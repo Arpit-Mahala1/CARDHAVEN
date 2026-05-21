@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { Card, EnemyTemplate } from '../types';
 import cardsData from '../data/cards.json';
 import enemiesData from '../data/enemies.json';
@@ -34,19 +34,19 @@ export function useGameContent() {
   };
 
   /** Returns a random card, respecting rarity weights. */
-  const getRandomCard = (rng: () => number = Math.random): Card => {
+  const getRandomCard = useCallback((rng: () => number = Math.random): Card => {
     const rarity = pickRarity(rng);
     const pool = cards.filter((c) => c.rarity === rarity);
     if (pool.length === 0) return cards[Math.floor(rng() * cards.length)];
     return pool[Math.floor(rng() * pool.length)];
-  };
+  }, [cards]);
 
   /** Returns a random enemy (simple uniform distribution). */
-  const getRandomEnemy = (rng: () => number = Math.random): EnemyTemplate => {
+  const getRandomEnemy = useCallback((rng: () => number = Math.random): EnemyTemplate => {
     return enemies[Math.floor(rng() * enemies.length)];
-  };
+  }, [enemies]);
 
-  const getStarterDeck = (characterClass: string): Card[] => {
+  const getStarterDeck = useCallback((characterClass: string): Card[] => {
     const strike = cards.find(c => c.id === 'strike') || cards.find(c => c.id === 'c_strike') || cards[0];
     const defend = cards.find(c => c.id === 'defend') || cards.find(c => c.id === 'c_defend') || cards[1];
     
@@ -61,7 +61,7 @@ export function useGameContent() {
       defend, defend, defend, defend,
       classCard, classCard,
     ];
-  };
+  }, [cards]);
 
   return { cards, enemies, getRandomCard, getRandomEnemy, getStarterDeck };
 }

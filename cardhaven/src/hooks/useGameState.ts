@@ -18,6 +18,7 @@ export function useGameState(autoEndTurn: boolean = false) {
     engine.endPlayerTurn();
     const newState = engine.getState();
     setGameState(newState);
+    try { console.log('[useGameState] endTurn -> setGameState', newState.phase); } catch(e) {}
 
     if (newState.phase !== 'gameover' && engine.checkBattleEnd() === 'won') {
       engine.advanceToReward();
@@ -89,10 +90,12 @@ export function useGameState(autoEndTurn: boolean = false) {
     if (success) {
       const newState = engine.getState();
       setGameState(newState);
+      try { console.log('[useGameState] playCard -> setGameState', newState.phase); } catch(e) {}
 
       if (engine.checkBattleEnd() === 'won') {
         engine.advanceToReward();
         setGameState(engine.getState());
+        try { console.log('[useGameState] playCard -> forced advanceToReward -> setGameState', engine.getState().phase); } catch(e) {}
       }
     }
     return success;
@@ -127,6 +130,7 @@ export function useGameState(autoEndTurn: boolean = false) {
     engine.addCardToDeck(card);
     engine.advanceToNextFloor();
     setGameState(engine.getState());
+    try { console.log('[useGameState] pickRewardCard -> advanceToNextFloor -> setGameState', engine.getState().phase); } catch(e) {}
   }, []);
 
   const skipReward = useCallback(() => {
@@ -135,6 +139,7 @@ export function useGameState(autoEndTurn: boolean = false) {
 
     engine.advanceToNextFloor();
     setGameState(engine.getState());
+    try { console.log('[useGameState] skipReward -> advanceToNextFloor -> setGameState', engine.getState().phase); } catch(e) {}
   }, []);
 
   const buyCard = useCallback((index: number, cost: number) => {

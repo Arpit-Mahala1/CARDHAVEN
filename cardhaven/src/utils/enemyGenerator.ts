@@ -21,10 +21,13 @@ export function generateEnemyEncounter(floor: number, seed: string = Math.random
   const rng = new SeededRNG(seed + floor);
   const templates = (enemyData as { enemies: EnemyTemplate[] }).enemies.filter(e => !e.isBoss);
 
-  // More enemies on higher floors
+  // More enemies on higher floors and harder enemy types unlock gradually.
+  const maxColumns = 5;
   let count = 1;
-  if (floor >= 5) count = 2;
-  if (floor >= 15) count = 3;
+  if (floor >= 3) count = 2;
+  if (floor >= 7) count = 3;
+  if (floor >= 12) count = 4;
+  if (floor >= 18) count = 5;
 
   // Pick enemies appropriate to floor
   const availableTemplates = templates.filter((_, i) => {
@@ -34,8 +37,9 @@ export function generateEnemyEncounter(floor: number, seed: string = Math.random
     return true;                     // all non-boss enemies
   });
 
+  count = Math.min(count, availableTemplates.length, maxColumns);
   const enemies: Enemy[] = [];
-  const columns = [0, 1, 2, 3].sort(() => 0.5 - rng.next());
+  const columns = [0, 1, 2, 3, 4].sort(() => 0.5 - rng.next());
 
   for (let i = 0; i < count; i++) {
     const template = availableTemplates[Math.floor(rng.next() * availableTemplates.length)];
@@ -73,11 +77,21 @@ export function generateBossEncounter(floor: number): Enemy[] {
 }
 
 function createEnemyInstance(template: EnemyTemplate, floor: number, index: number, boardX: number, boardY: number): Enemy {
-  const scaling = 1 + (floor - 1) * 0.12;
-  const health = Math.round(template.baseHealth * scaling);
+  const healthScaling = 1 + (floor - 1) * 0.14;
+  const actionScaling = 1 + (floor - 1) * 0.11;
+  const health = Math.round(template.baseHealth * healthScaling);
   const startIndex = 0;
 
-  const intents = generateInitialIntents(template, startIndex);
+  const scaledActions = template.actions.map(action => ({
+    ...action,
+    damage: action.damage ? Math.max(1, Math.round(action.damage * actionScaling)) : action.damage,
+    block: action.block ? Math.max(1, Math.round(action.block * actionScaling)) : action.block,
+    heal: action.heal ? Math.max(1, Math.round(action.heal * actionScaling)) : action.heal,
+    statusEffects: action.statusEffects?.map(se => ({ ...se, stacks: Math.max(1, Math.round(se.stacks * actionScaling)) })),
+  }));
+
+  const scaledTemplate = { ...template, actions: scaledActions };
+  const intents = generateInitialIntents(scaledTemplate, startIndex);
 
   return {
     id: `enemy-${template.id}-${Date.now()}-${index}`,
@@ -89,7 +103,7 @@ function createEnemyInstance(template: EnemyTemplate, floor: number, index: numb
     health,
     block: 0,
     intents,
-    actions: template.actions,
+    actions: scaledActions,
     statusEffects: [],
     currentActionIndex: startIndex,
     isBoss: template.isBoss,

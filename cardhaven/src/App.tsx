@@ -73,6 +73,11 @@ function App() {
           onRest={rest}
         />
       )}
+      {screen === 'game' && gameState && (
+        <div style={{position: 'fixed', right: 12, top: 12, zIndex: 80, background: 'rgba(0,0,0,0.7)', color: '#fff', padding: '6px 10px', borderRadius: 6, fontSize: 12}}>
+          Phase: {gameState.phase}
+        </div>
+      )}
       
       {screen === 'leaderboard' && (
         <LeaderboardPage onBack={() => setScreen('menu')} />

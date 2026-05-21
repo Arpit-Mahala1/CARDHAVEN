@@ -84,7 +84,7 @@ export class BattleEngine {
     this.state = { ...this.state, hand: newHand };
 
     // Apply effect
-    this.applyCardEffect(card, targets);
+    const rewardTriggered = this.applyCardEffect(card, targets);
 
     // Move to discard or exhaust
     if (card.exhaust) {
@@ -102,8 +102,10 @@ export class BattleEngine {
     return true;
   }
 
-  private applyCardEffect(card: Card, targets: Enemy[]): void {
+  private applyCardEffect(card: Card, targets: Enemy[]): boolean {
     const effect = card.effect;
+    const applyToSelf = effect.applyToSelf ?? card.applyToSelf;
+    const ignoreBlock = effect.ignoreBlock ?? false;
 
     // 0. Special: "Last Stand" — damage = missing HP
     let effectiveDamage = effect.damage ?? 0;
@@ -158,7 +160,7 @@ export class BattleEngine {
           if (vulnEffect) damage = Math.floor(damage * 1.5);
 
           // Apply block first
-          const absorbed = Math.min(currentTarget.block, damage);
+          const absorbed = ignoreBlock ? 0 : Math.min(currentTarget.block, damage);
           const remaining = damage - absorbed;
 
           let shardsGained = 0;
@@ -203,8 +205,13 @@ export class BattleEngine {
     }
 
     // 2. Block
-    if (effect.block) {
-      let blockAmount = effect.block;
+    if (effect.block || effect.blockFromMissingHealthPercent) {
+      let blockAmount = effect.block ?? 0;
+
+      if (effect.blockFromMissingHealthPercent) {
+        const missingHealth = Math.max(0, this.state.maxHealth - this.state.health);
+        blockAmount += Math.floor(missingHealth * (effect.blockFromMissingHealthPercent / 100));
+      }
 
       // Dexterity bonus
       const dexEffect = this.getPlayerStatusEffect('dexterity');
@@ -249,7 +256,7 @@ export class BattleEngine {
     // 7. Status effects (Applied AFTER damage)
     if (effect.statusEffects) {
       effect.statusEffects.forEach(se => {
-        if (effect.applyToSelf) {
+        if (applyToSelf) {
           this.addPlayerStatusEffect(se.type, se.stacks);
         } else {
           targets.forEach(target => {
@@ -258,6 +265,17 @@ export class BattleEngine {
         }
       });
     }
+
+    // If applying this card's effects killed the last enemy, advance to reward.
+    // This ensures immediate transition when the final enemy dies as part of
+    // the card effect (prevents races where a spawn or movement would keep
+    // the battle alive erroneously).
+    if (this.checkBattleEnd() === 'won') {
+      this.advanceToReward();
+      return true;
+    }
+
+    return false;
   }
 
   // ─── End Player Turn & Enemy Phases ──────────────────────────
@@ -653,16 +671,18 @@ export class BattleEngine {
   // ─── Battle End ───────────────────────────────────────────────
   checkBattleEnd(): 'won' | 'lost' | 'ongoing' {
     if (this.state.health <= 0) return 'lost';
-    // If the board is empty, battle is won
-    if (this.state.enemies.every(e => e.health <= 0) && this.state.enemies.length === 0) return 'won';
-    // Actually, in an endless lane game, do you ever win?
-    // Let's say you win the floor after surviving X turns, OR killing Y enemies.
-    // For now, if board is empty, you win.
+    // If there are no enemies or none are alive, battle is won
+    if (!this.state.enemies || this.state.enemies.length === 0) return 'won';
     if (this.state.enemies.filter(e => e.health > 0).length === 0) return 'won';
     return 'ongoing';
   }
 
   advanceToReward(): void {
+    try {
+      console.log('[BattleEngine] advanceToReward called — transitioning to reward phase', { floor: this.state.floor, enemies: this.state.enemies.length });
+    } catch (e) {
+      // avoid any runtime logging errors in non-browser environments
+    }
     const floorPoints = this.state.floor * GAME_CONSTANTS.POINTS_PER_FLOOR;
     const healthPoints = this.state.health * GAME_CONSTANTS.POINTS_PER_HEALTH_REMAINING;
     const score = this.state.score + floorPoints + healthPoints;
@@ -687,6 +707,7 @@ export class BattleEngine {
 
   advanceToNextFloor(): void {
     const nextFloor = this.state.floor + 1;
+    try { console.log('[BattleEngine] advanceToNextFloor', { fromFloor: this.state.floor, toFloor: nextFloor }); } catch (e) {}
     const isVictory = nextFloor > GAME_CONSTANTS.MAX_FLOORS;
 
     if (isVictory) {
@@ -708,6 +729,7 @@ export class BattleEngine {
         enemies: bossEnemies,
         block: 0,
         energy: this.state.maxEnergy,
+        isPlayerTurn: true,
         hand: [],
       };
       this.drawCards(GAME_CONSTANTS.STARTING_HAND_SIZE);
@@ -762,6 +784,7 @@ export class BattleEngine {
       enemies: newEnemies,
       block: 0,
       energy: this.state.maxEnergy,
+      isPlayerTurn: true,
       hand: [],
     };
 
@@ -834,12 +857,17 @@ export class BattleEngine {
   }
 
   leaveShop(): void {
+    try { console.log('[BattleEngine] leaveShop -> returning to battle', { floor: this.state.floor }); } catch (e) {}
     const newEnemies = generateEnemyEncounter(this.state.floor);
     this.state = {
       ...this.state,
       phase: 'battle',
       enemies: newEnemies,
-      shopState: undefined
+      shopState: undefined,
+      isPlayerTurn: true,
+      energy: this.state.maxEnergy,
+      block: 0,
+      hand: [],
     };
     this.drawCards(GAME_CONSTANTS.STARTING_HAND_SIZE);
   }

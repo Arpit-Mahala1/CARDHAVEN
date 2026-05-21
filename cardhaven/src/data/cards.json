@@ -194,7 +194,7 @@
       "effect": {
         "damage": 5
       },
-      "targetType": "row"
+      "targetType": "all"
     },
     {
       "id": "alchemy",
@@ -318,6 +318,7 @@
       "effect": {
         "damage": 6
       },
+      "targetType": "cell",
       "image": "assets/cards/strike.png"
     },
     {
@@ -330,6 +331,7 @@
       "effect": {
         "block": 5
       },
+      "targetType": "none",
       "image": "assets/cards/defend.png"
     },
     {
@@ -349,7 +351,7 @@
     {
       "id": "c_vampiric_bite",
       "name": "Vampiric Bite",
-      "description": "Deal 8 damage. Heal for half the unblocked damage dealt.",
+      "description": "Deal 8 damage. Heal 4 HP.",
       "cost": 2,
       "cardType": "attack",
       "rarity": "uncommon",
@@ -357,6 +359,7 @@
         "damage": 8,
         "heal": 4
       },
+      "targetType": "cell",
       "image": "assets/cards/vampiric_bite.png"
     },
     {
@@ -393,6 +396,7 @@
       "cost": 1,
       "cardType": "defense",
       "rarity": "common",
+      "targetType": "none",
       "effect": {
         "block": 12,
         "statusEffects": [
@@ -434,6 +438,7 @@
         "damage": 3,
         "hits": 4
       },
+      "targetType": "cell",
       "image": "assets/cards/frenzy.png"
     },
     {
@@ -459,10 +464,11 @@
     {
       "id": "c_necromancy",
       "name": "Necromancy",
-      "description": "Exhaust a card. Draw 2 cards.",
+      "description": "Exhaust. Draw 2 cards.",
       "cost": 1,
       "cardType": "utility",
       "rarity": "rare",
+      "targetType": "none",
       "effect": {
         "draw": 2
       },
@@ -476,6 +482,7 @@
       "cost": 2,
       "cardType": "utility",
       "rarity": "rare",
+      "targetType": "cell",
       "effect": {
         "statusEffects": [
           {
@@ -493,6 +500,7 @@
       "cost": 1,
       "cardType": "utility",
       "rarity": "uncommon",
+      "targetType": "cell",
       "effect": {
         "statusEffects": [
           {
@@ -514,15 +522,17 @@
       "cost": 1,
       "cardType": "attack",
       "rarity": "uncommon",
+      "targetType": "cell",
       "effect": {
-        "damage": 9
+        "damage": 9,
+        "ignoreBlock": true
       },
       "image": "assets/cards/phantom_strike.png"
     },
     {
       "id": "c_cursed_blade",
       "name": "Cursed Blade",
-      "description": "Gain 3 Strength. Take 1 damage at the end of your turn.",
+      "description": "Gain 3 Strength. Apply 1 Bleed to yourself.",
       "cost": 1,
       "cardType": "power",
       "rarity": "rare",
@@ -549,8 +559,9 @@
       "cost": 1,
       "cardType": "defense",
       "rarity": "uncommon",
+      "targetType": "none",
       "effect": {
-        "block": 10
+        "blockFromMissingHealthPercent": 20
       },
       "image": "assets/cards/blood_barrier.png"
     },
@@ -561,6 +572,7 @@
       "cost": 1,
       "cardType": "utility",
       "rarity": "rare",
+      "targetType": "cell",
       "exhaust": true,
       "effect": {
         "statusEffects": [
@@ -575,10 +587,11 @@
     {
       "id": "c_nightmare",
       "name": "Nightmare",
-      "description": "Choose a card. Add 3 copies of it to your hand.",
+      "description": "Exhaust. Draw 3 cards.",
       "cost": 3,
       "cardType": "utility",
       "rarity": "legendary",
+      "targetType": "none",
       "effect": {
         "draw": 3
       },
@@ -607,7 +620,7 @@
     {
       "id": "c_ritual_dagger",
       "name": "Ritual Dagger",
-      "description": "Deal 15 damage. If fatal, permanently increase this card's damage by 3. Exhaust.",
+      "description": "Deal 15 damage. Exhaust.",
       "cost": 1,
       "cardType": "attack",
       "rarity": "rare",
@@ -625,6 +638,7 @@
       "cost": 2,
       "cardType": "attack",
       "rarity": "uncommon",
+      "targetType": "cell",
       "effect": {
         "damage": 10
       },
@@ -633,10 +647,11 @@
     {
       "id": "c_consume",
       "name": "Consume",
-      "description": "Lose 1 Max HP. Gain 2 Strength. Exhaust.",
+      "description": "Gain 2 Strength. Exhaust.",
       "cost": 0,
       "cardType": "power",
       "rarity": "rare",
+      "targetType": "none",
       "exhaust": true,
       "effect": {
         "statusEffects": [
@@ -656,6 +671,7 @@
       "cost": 2,
       "cardType": "attack",
       "rarity": "legendary",
+      "targetType": "cell",
       "effect": {
         "healthPercentDamage": 10
       },
@@ -664,7 +680,7 @@
     {
       "id": "c_plague",
       "name": "Plague",
-      "description": "Apply 2 Poison to an enemy. Spread its Poison to all other enemies.",
+      "description": "Apply 2 Poison to an enemy.",
       "cost": 2,
       "cardType": "utility",
       "rarity": "rare",
@@ -701,7 +717,7 @@
     {
       "id": "c_carrion_swarm",
       "name": "Carrion Swarm",
-      "description": "Deal 2 damage to all enemies for each status effect they have.",
+      "description": "Deal 2 damage to all enemies.",
       "cost": 2,
       "cardType": "attack",
       "rarity": "uncommon",
@@ -715,10 +731,11 @@
     {
       "id": "c_spectral_shield",
       "name": "Spectral Shield",
-      "description": "Gain 5 block. Retain your hand this turn.",
+      "description": "Gain 5 block.",
       "cost": 1,
       "cardType": "defense",
       "rarity": "common",
+      "targetType": "none",
       "effect": {
         "block": 5
       },
@@ -727,10 +744,11 @@
     {
       "id": "c_death_knell",
       "name": "Death Knell",
-      "description": "If the enemy is below 30% HP, instantly kill them.",
+      "description": "Deal massive damage to an enemy.",
       "cost": 3,
       "cardType": "attack",
       "rarity": "legendary",
+      "targetType": "cell",
       "effect": {
         "damage": 999
       },

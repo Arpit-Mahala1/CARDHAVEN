@@ -13,6 +13,7 @@ export interface Card {
   upgrades?: string[];
   /** If true, card is removed from deck after playing (exhaust) */
   exhaust?: boolean;
+  applyToSelf?: boolean;
   /** Lore flavor text */
   lore?: string;
 }
@@ -27,6 +28,8 @@ export interface CardEffect {
   hits?: number;
   knockback?: number;
   area?: '2x2' | 'cross' | 'row' | 'column';
+  ignoreBlock?: boolean;
+  blockFromMissingHealthPercent?: number;
   /** Damage to self (risk/reward cards) */
   selfDamage?: number;
   /** Energy gain */

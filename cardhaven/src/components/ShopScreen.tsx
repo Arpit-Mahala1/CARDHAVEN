@@ -45,7 +45,7 @@ export default function ShopScreen({
   const removalCost = isThrifty ? Math.floor(shop.removalCost * 0.5) : shop.removalCost;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-bg-primary p-8 animate-fade-in relative">
+    <div className="flex flex-col items-center justify-start min-h-screen w-full bg-bg-primary p-8 animate-fade-in relative pb-32">
       {/* Merchant Title */}
       <div className="text-center mb-12">
         <span className="text-5xl mb-4 block">🕯️</span>
@@ -139,7 +139,7 @@ export default function ShopScreen({
       </div>
 
       {/* Footer */}
-      <div className="mt-16 flex justify-center">
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center py-4 bg-bg-primary/95 backdrop-blur-md border-t border-white border-opacity-10">
         <button onClick={onLeave} className="btn-primary py-4 px-12 text-xl shadow-gold">
           CONTINUE TO HAVEN
         </button>

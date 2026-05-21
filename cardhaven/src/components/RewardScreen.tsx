@@ -20,10 +20,10 @@ export default function RewardScreen({ onPickCard, onSkip, floor }: RewardScreen
       newChoices.push(getRandomCard(Math.random));
     }
     setChoices(newChoices);
-  }, []);
+  }, [getRandomCard]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 relative z-50 animate-fade-in bg-bg-primary bg-opacity-90 backdrop-blur-md absolute inset-0">
+    <div style={{ position: 'fixed', inset: 0, zIndex: 99999 }} className="flex flex-col items-center justify-center p-4 animate-fade-in bg-bg-primary bg-opacity-95 backdrop-blur-md">
       
       <div className="text-center mb-12">
         <h2 className="text-4xl font-serif text-gold drop-shadow-md">VICTORY</h2>
