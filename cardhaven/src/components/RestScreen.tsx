@@ -20,11 +20,11 @@ export default function RestScreen({ health, maxHealth, floor, onRest }: RestScr
       </div>
 
       <h2 className="text-4xl font-serif text-accent-gold tracking-widest mb-2 text-center">
-        REST SITE
+        Rest Stop
       </h2>
-      <p className="text-[10px] uppercase tracking-[0.4em] text-text-muted mb-4">Gallery Depth {floor}</p>
+      <p className="text-[10px] uppercase tracking-[0.4em] text-text-muted mb-4">Floor {floor}</p>
       <p className="text-text-secondary font-serif italic mb-12 text-center max-w-md">
-        The darkness recedes momentarily. A flickering flame offers brief respite from the gallery's hunger.
+        Take a short rest to recover some health and prepare for the next floor.
       </p>
 
       {/* Health display */}

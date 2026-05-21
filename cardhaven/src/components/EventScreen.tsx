@@ -24,7 +24,7 @@ export default function EventScreen({ event, floor, health, maxHealth, shards, o
         {event.title}
       </h2>
       
-      <p className="text-[10px] uppercase tracking-[0.4em] text-text-muted mb-8">Gallery Depth {floor}</p>
+      <p className="text-[10px] uppercase tracking-[0.4em] text-text-muted mb-8">Floor {floor}</p>
 
       {/* Description */}
       <div className="glass-panel p-8 max-w-lg mb-12 border-opacity-20">

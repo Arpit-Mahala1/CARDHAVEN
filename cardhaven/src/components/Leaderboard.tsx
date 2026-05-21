@@ -18,9 +18,9 @@ export default function Leaderboard() {
     <div className="w-full max-w-5xl mx-auto animate-fade-in">
       <div className="text-center mb-8">
         <h2 className="text-4xl font-serif text-gold drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]">
-          HALL OF LEGENDS
+          Leaderboard
         </h2>
-        <p className="text-text-secondary mt-2">The greatest runs recorded in the history of the Haven</p>
+        <p className="text-text-secondary mt-2">Top runs and scores from players.</p>
       </div>
 
       <div className="glass-panel overflow-hidden shadow-gold">
@@ -29,7 +29,7 @@ export default function Leaderboard() {
             <thead>
               <tr className="bg-black bg-opacity-40 text-text-secondary text-sm uppercase tracking-wider font-mono">
                 <th className="p-4 border-b border-white border-opacity-10 font-medium">Rank</th>
-                <th className="p-4 border-b border-white border-opacity-10 font-medium">Legend</th>
+                <th className="p-4 border-b border-white border-opacity-10 font-medium">Player</th>
                 <th className="p-4 border-b border-white border-opacity-10 font-medium text-right">Score</th>
                 <th className="p-4 border-b border-white border-opacity-10 font-medium text-center">Floor</th>
                 <th className="p-4 border-b border-white border-opacity-10 font-medium text-center">Class</th>
@@ -40,7 +40,7 @@ export default function Leaderboard() {
               {entries.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="p-8 text-center text-text-secondary italic">
-                    The Hall is empty. Will you be the first to enter?
+                    No scores yet. Be the first to submit one.
                   </td>
                 </tr>
               ) : (

@@ -26,8 +26,8 @@ export default function RewardScreen({ onPickCard, onSkip, floor }: RewardScreen
     <div style={{ position: 'fixed', inset: 0, zIndex: 99999 }} className="flex flex-col items-center justify-center p-4 animate-fade-in bg-bg-primary bg-opacity-95 backdrop-blur-md">
       
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-serif text-gold drop-shadow-md">VICTORY</h2>
-        <p className="text-text-secondary mt-2">Floor {floor} Cleared. Choose your reward.</p>
+        <h2 className="text-4xl font-serif text-gold drop-shadow-md">Victory</h2>
+        <p className="text-text-secondary mt-2">Floor {floor} cleared. Choose your reward.</p>
       </div>
 
       <div className="flex justify-center gap-8 mb-16">
@@ -48,7 +48,7 @@ export default function RewardScreen({ onPickCard, onSkip, floor }: RewardScreen
         onClick={onSkip}
         className="btn-ghost px-8 py-3 border border-white border-opacity-20 hover:border-opacity-50"
       >
-        Skip Reward
+        Skip
       </button>
 
     </div>

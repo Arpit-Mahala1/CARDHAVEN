@@ -107,7 +107,7 @@ export default function SettingsScreen({ onBack }: SettingsScreenProps) {
 
       {/* Footer */}
       <div className="mt-12 flex flex-col items-center gap-2">
-        <p className="text-[10px] text-text-muted uppercase tracking-widest">Cardhaven: The Gloom-bound Gallery</p>
+        <p className="text-[10px] text-text-muted uppercase tracking-widest">Cardhaven</p>
         <p className="text-[9px] text-text-muted opacity-50">v1.0.0</p>
       </div>
     </div>

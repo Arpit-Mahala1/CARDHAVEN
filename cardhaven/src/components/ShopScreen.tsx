@@ -49,8 +49,8 @@ export default function ShopScreen({
       {/* Merchant Title */}
       <div className="text-center mb-12">
         <span className="text-5xl mb-4 block">🕯️</span>
-        <h2 className="text-4xl font-serif text-gold tracking-widest drop-shadow-gold">THE SILENT MERCHANT</h2>
-        <p className="text-text-secondary mt-2 italic">"Soul Shards for survival... a fair trade, no?"</p>
+        <h2 className="text-4xl font-serif text-gold tracking-widest drop-shadow-gold">Shop</h2>
+        <p className="text-text-secondary mt-2 italic">Buy cards, relics, or remove a card from your deck.</p>
       </div>
 
       {/* Stats Bar */}
@@ -64,7 +64,7 @@ export default function ShopScreen({
       <div className="flex flex-col gap-12 w-full max-w-6xl">
         {/* Cards Row */}
         <div className="flex flex-col gap-6">
-          <h3 className="text-sm uppercase tracking-widest text-text-muted font-bold border-b border-white border-opacity-10 pb-2">Ancient Manuscripts</h3>
+          <h3 className="text-sm uppercase tracking-widest text-text-muted font-bold border-b border-white border-opacity-10 pb-2">Cards</h3>
           <div className="flex justify-center gap-8">
             {shop.cards.map((card, i) => {
               const cost = getCardCost(card.rarity);
@@ -92,7 +92,7 @@ export default function ShopScreen({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Relics */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-sm uppercase tracking-widest text-text-muted font-bold border-b border-white border-opacity-10 pb-2">Sacred Relics</h3>
+            <h3 className="text-sm uppercase tracking-widest text-text-muted font-bold border-b border-white border-opacity-10 pb-2">Relics</h3>
             <div className="flex gap-6">
               {shop.relics.map((relic, i) => {
                 const cost = relicCost;
@@ -120,10 +120,10 @@ export default function ShopScreen({
 
           {/* Card Removal */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-sm uppercase tracking-widest text-text-muted font-bold border-b border-white border-opacity-10 pb-2">Deck Purge</h3>
+            <h3 className="text-sm uppercase tracking-widest text-text-muted font-bold border-b border-white border-opacity-10 pb-2">Remove Card</h3>
             <div className="glass-panel p-6 border-opacity-20 flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                <span className="font-serif text-lg text-text-primary">Burn a Memory</span>
+                <span className="font-serif text-lg text-text-primary">Remove a card</span>
                 <p className="text-xs text-text-secondary">Permanently remove a card from your deck.</p>
               </div>
               <button 
@@ -141,14 +141,14 @@ export default function ShopScreen({
       {/* Footer */}
       <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center py-4 bg-bg-primary/95 backdrop-blur-md border-t border-white border-opacity-10">
         <button onClick={onLeave} className="btn-primary py-4 px-12 text-xl shadow-gold">
-          CONTINUE TO HAVEN
+          Continue
         </button>
       </div>
 
       {/* Card Removal Overlay */}
       {isRemoving && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex flex-col items-center p-12 overflow-y-auto backdrop-blur-md">
-          <h2 className="text-3xl font-serif text-gold mb-8">WHICH MEMORY SHALL WE BURN?</h2>
+          <h2 className="text-3xl font-serif text-gold mb-8">Choose a card to remove</h2>
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             {gameState.deck.map((card, i) => (
               <div key={i} className="hover:scale-105 transition-transform cursor-pointer" onClick={() => {
@@ -159,7 +159,7 @@ export default function ShopScreen({
               </div>
             ))}
           </div>
-          <button onClick={() => setIsRemoving(false)} className="btn-secondary px-8 py-3">CANCEL</button>
+          <button onClick={() => setIsRemoving(false)} className="btn-secondary px-8 py-3">Cancel</button>
         </div>
       )}
     </div>

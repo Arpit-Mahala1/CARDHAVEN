@@ -10,20 +10,20 @@ interface TutorialStep {
 const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'intro',
-    title: 'The Descent Begins',
-    content: 'Welcome to the Gloom-bound Gallery. Your goal is to reach the 10th floor and defeat the Ink-Stained Eye. Use cards to strike enemies and defend yourself.',
+    title: 'Getting Started',
+    content: 'Welcome to Cardhaven. Reach floor 10 and defeat the final boss. Use your cards to attack and defend.',
     trigger: 'start'
   },
   {
     id: 'grid',
     title: 'Positioning Matters',
-    content: 'Enemies move down the grid each turn. If they cross the Threshold (bottom row), you will take direct damage. Target them before they reach you!',
+    content: 'Enemies move down each turn. If they reach the bottom row they will damage you. Stop them before they get there.',
     trigger: 'battle'
   },
   {
     id: 'status',
-    title: 'Eldritch Afflictions',
-    content: 'Watch out for status effects like Bleed and Doom. Some cards can cleanse them, or use them to your advantage.',
+    title: 'Status Effects',
+    content: 'Some cards apply effects like Bleed or Doom. These can hurt or help you — learn what each one does.',
     trigger: 'battle'
   }
 ];

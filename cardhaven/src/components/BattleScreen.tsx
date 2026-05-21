@@ -94,7 +94,7 @@ export default function BattleScreen({
       {/* Exit Button */}
       <button 
         onClick={() => {
-          if (window.confirm("Abandon this descent? All progress will be lost to the gloom.")) {
+          if (window.confirm("Abandon this run? All progress will be lost.")) {
             onExit();
           }
         }}
@@ -114,7 +114,7 @@ export default function BattleScreen({
             {/* Class & Floor */}
             <div className="flex flex-col gap-1">
               <span className="text-[9px] font-bold text-accent-gold uppercase tracking-[0.4em] flex items-center gap-2 opacity-60">
-                Gallery Depth {gameState.floor}
+                Floor {gameState.floor}
                 {gameState.floor % 5 === 0 && <span className="animate-pulse">👁️</span>}
               </span>
               <h2 className="text-xl font-serif text-text-primary uppercase tracking-widest">

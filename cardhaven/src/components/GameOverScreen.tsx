@@ -40,10 +40,10 @@ export default function GameOverScreen({ gameState, user, onMainMenu }: GameOver
       
       <div className="text-center mb-12">
         <h2 className={`text-6xl font-serif drop-shadow-md mb-2 ${isVictory ? 'text-gold' : 'text-danger'}`}>
-          {isVictory ? 'LEGEND FORGED' : 'YOU DIED'}
+          {isVictory ? 'Victory' : 'Defeated'}
         </h2>
         <p className="text-text-secondary text-lg">
-          {isVictory ? 'The Haven has been conquered.' : 'Your journey ends here.'}
+          {isVictory ? 'You cleared the floor.' : 'Your run has ended.'}
         </p>
       </div>
 
@@ -78,11 +78,11 @@ export default function GameOverScreen({ gameState, user, onMainMenu }: GameOver
             disabled={submitting || submitted}
             className={`btn-primary w-full py-3 ${submitted ? 'opacity-50' : ''}`}
           >
-            {submitting ? 'Recording Legend...' : submitted ? 'Recorded in the Hall' : 'Submit Score'}
+            {submitting ? 'Submitting score...' : submitted ? 'Score recorded' : 'Submit score'}
           </button>
         ) : (
           <p className="text-center text-text-secondary text-sm mb-2 italic">
-            Sign in before starting a run to record your score in the Hall of Legends.
+            Sign in before starting a run to save your score on the leaderboard.
           </p>
         )}
         
@@ -90,7 +90,7 @@ export default function GameOverScreen({ gameState, user, onMainMenu }: GameOver
           onClick={onMainMenu}
           className="btn-secondary w-full py-3"
         >
-          Return to Haven
+          Back to menu
         </button>
       </div>
 

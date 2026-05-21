@@ -33,14 +33,14 @@ export default function MainMenu({
             <span className="text-sm text-accent-gold font-mono tracking-widest">{user.displayName || user.email || 'The Unnamed Soul'}</span>
             {onLogoutClick && (
               <button onClick={onLogoutClick} className="text-[10px] uppercase tracking-widest text-text-muted hover:text-accent-gold transition-colors">
-                Depart
-              </button>
+                  Sign Out
+                </button>
             )}
           </div>
         ) : (
           onLoginClick && (
             <button onClick={onLoginClick} className="btn-secondary text-[10px] uppercase tracking-widest py-2 px-6">
-              Enter Covenant
+              Sign In
             </button>
           )
         )}
@@ -53,13 +53,13 @@ export default function MainMenu({
         </h1>
         <div className="h-px w-24 bg-accent-gold mx-auto mt-4 opacity-30" />
         <p className="mt-6 text-sm md:text-base text-text-secondary uppercase tracking-[0.4em] font-serif opacity-70">
-          The Gloom-bound Gallery
+          The Gallery
         </p>
       </div>
 
       {/* Class Selection */}
       <div className="z-10 flex flex-col items-center w-full max-w-5xl">
-        <h3 className="text-[10px] uppercase tracking-[0.5em] text-text-muted mb-10 font-bold opacity-60">Choose Your Vessel</h3>
+        <h3 className="text-[10px] uppercase tracking-[0.5em] text-text-muted mb-10 font-bold opacity-60">Choose Your Character</h3>
         
         <div className="flex justify-center gap-8 mb-16 flex-wrap">
           {/* Warrior */}
@@ -72,7 +72,7 @@ export default function MainMenu({
             <div className="text-center px-4">
               <h3 className="font-serif font-bold text-xl text-text-primary tracking-widest uppercase">The Sunderer</h3>
               <div className="h-px w-8 bg-accent-red mx-auto my-3 opacity-40" />
-              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">A brute forged in blood. Endures the coming dark with iron and resolve.</p>
+              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">A tough fighter who soaks up damage and hits hard.</p>
             </div>
           </div>
 
@@ -86,7 +86,7 @@ export default function MainMenu({
             <div className="text-center px-4">
               <h3 className="font-serif font-bold text-xl text-text-primary tracking-widest uppercase">The Archivist</h3>
               <div className="h-px w-8 bg-accent-purple mx-auto my-3 opacity-40" />
-              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">Seeks truths that bleed. Channels the void to rewrite the tapestry of fate.</p>
+              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">A spellcaster who controls the field with powerful magic.</p>
             </div>
           </div>
 
@@ -100,7 +100,7 @@ export default function MainMenu({
             <div className="text-center px-4">
               <h3 className="font-serif font-bold text-xl text-text-primary tracking-widest uppercase">The Shadow</h3>
               <div className="h-px w-8 bg-accent-blue mx-auto my-3 opacity-40" />
-              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">A whisper in the halls. Deals in venom and the silence between heartbeats.</p>
+              <p className="text-[10px] text-text-secondary leading-relaxed font-serif italic">A stealthy attacker who uses quick strikes and poison.</p>
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function MainMenu({
               onClick={onResumeRun}
               className="btn-primary w-full text-[10px] font-bold uppercase tracking-[0.3em] py-5 shadow-gold hover:tracking-[0.4em] transition-all mb-4"
             >
-              Continue Descent
+              Continue
             </button>
           )}
 
@@ -120,7 +120,7 @@ export default function MainMenu({
             onClick={() => onStartGame(selectedClass)}
             className="btn-primary w-full text-xs uppercase tracking-[0.3em] py-5 shadow-gold hover:tracking-[0.4em] transition-all"
           >
-            New Threshold
+            New Run
           </button>
 
           <button 
@@ -130,21 +130,21 @@ export default function MainMenu({
             }}
             className="w-full glass-panel border-accent-gold border-opacity-30 text-[10px] uppercase tracking-[0.3em] py-4 hover:bg-accent-gold hover:text-black transition-all"
           >
-            Daily Descent
+            Daily Run
           </button>
           
           <button 
             onClick={onLeaderboard}
             className="text-[10px] uppercase tracking-[0.3em] text-text-muted hover:text-accent-gold transition-colors"
           >
-            Tomb of Legends
+            Leaderboard
           </button>
           
           <button 
             onClick={onSettings}
             className="text-[10px] uppercase tracking-[0.3em] text-text-muted hover:text-accent-gold transition-colors"
           >
-            ⚙ Inscriptions
+            ⚙ Settings
           </button>
         </div>
       </div>
